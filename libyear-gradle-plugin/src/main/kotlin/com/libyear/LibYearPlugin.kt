@@ -41,7 +41,7 @@ class LibYearPlugin : Plugin<Project> {
 
   private fun checkDependencies(
     project: Project,
-    resolvableDependencies: ResolvableDependencies,
+    resolvableDependencies: ResolvableDependencies
   ) {
 
     val extension = project.extensions.getByName(EXTENSION_NAME) as LibYearExtension
@@ -61,7 +61,7 @@ class LibYearPlugin : Plugin<Project> {
       extension.clock.instant(),
       HttpUrlAdapter(),
       collectRepositoryToVersionAdapter(extension),
-      collectAllRepositories(project),
+      collectAllRepositories(project)
     )
 
   private fun collectRepositoryToVersionAdapter(extension: LibYearExtension): Map<String, VersionInfoAdapter> {
@@ -71,7 +71,7 @@ class LibYearPlugin : Plugin<Project> {
   }
 
   private fun defaultAdaptersByRepository() = mapOf<String, VersionInfoAdapter>(
-    ArtifactRepositoryContainer.DEFAULT_MAVEN_CENTRAL_REPO_NAME to SolrSearchAdapter.forMavenCentral(),
+    ArtifactRepositoryContainer.DEFAULT_MAVEN_CENTRAL_REPO_NAME to SolrSearchAdapter.forMavenCentral()
     // FIXME
     // ArtifactRepositoryContainer.DEFAULT_MAVEN_LOCAL_REPO_NAME to MavenLocalAdapter(),
   )
@@ -82,7 +82,7 @@ class LibYearPlugin : Plugin<Project> {
 
   private fun maybeReportFailure(
     logger: Logger,
-    validator: DependencyValidator,
+    validator: DependencyValidator
   ) {
 
     if (validator.isValid()) return

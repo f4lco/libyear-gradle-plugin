@@ -9,7 +9,7 @@ import org.gradle.api.artifacts.result.UnresolvedDependencyResult
 import org.gradle.api.logging.Logger
 
 abstract class DependencyVisitor(
-  protected val logger: Logger,
+  protected val logger: Logger
 ) {
 
   abstract fun canContinue(): Boolean

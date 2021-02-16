@@ -32,7 +32,7 @@ class DependencyTraversal private constructor(
 
     fun visit(
       root: ResolvedComponentResult,
-      visitor: DependencyVisitor,
+      visitor: DependencyVisitor
     ): Unit = DependencyTraversal(visitor).visit(root)
   }
 }

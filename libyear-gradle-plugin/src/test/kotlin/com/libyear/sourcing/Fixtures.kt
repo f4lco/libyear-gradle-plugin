@@ -12,26 +12,26 @@ internal object Fixtures {
   internal val apacheCommonsTextArtifact: ModuleVersionIdentifier = newId(
     "org.apache.commons",
     "commons-text",
-    "1.9",
+    "1.9"
   )
 
   internal val apacheCommonsCollectionsArtifact: ModuleVersionIdentifier = newId(
     "org.apache.commons",
     "commons-collections4",
-    "4.4",
+    "4.4"
   )
 
   internal val notExistingArtifact: ModuleVersionIdentifier = newId(
     "org.apache.commons",
     "commons-text-not-existing",
-    "1.9",
+    "1.9"
   )
 
   internal val stubRepository = StubRepository("stubRepo1")
 }
 
 internal class StubRepository(
-  private val name: String,
+  private val name: String
 ) : ArtifactRepository {
 
   override fun getName() = name

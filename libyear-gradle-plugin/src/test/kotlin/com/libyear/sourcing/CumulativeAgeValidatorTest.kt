@@ -39,7 +39,7 @@ internal class CumulativeAgeValidatorTest {
       .isEqualTo(
         listOf(
           DependencyInfo(Fixtures.apacheCommonsCollectionsArtifact, Duration.ofSeconds(42)),
-          DependencyInfo(Fixtures.apacheCommonsTextArtifact, Duration.ofSeconds(5)),
+          DependencyInfo(Fixtures.apacheCommonsTextArtifact, Duration.ofSeconds(5))
         )
       )
   }

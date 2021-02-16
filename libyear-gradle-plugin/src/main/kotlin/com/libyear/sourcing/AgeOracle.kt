@@ -6,6 +6,6 @@ import java.time.Duration
 interface AgeOracle {
   fun get(
     module: ModuleVersionIdentifier,
-    repositoryName: String,
+    repositoryName: String
   ): Duration?
 }

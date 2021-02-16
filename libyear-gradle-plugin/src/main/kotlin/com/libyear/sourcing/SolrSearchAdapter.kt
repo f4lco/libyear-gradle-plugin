@@ -12,7 +12,7 @@ import java.io.IOException
 import java.time.Instant
 
 class SolrSearchAdapter(
-  private val repoUrl: String,
+  private val repoUrl: String
 ) : VersionInfoAdapter {
 
   private val client = OkHttpClient()

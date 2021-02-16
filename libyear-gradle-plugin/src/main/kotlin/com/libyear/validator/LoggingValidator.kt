@@ -5,7 +5,7 @@ import org.gradle.api.logging.Logger
 
 class LoggingValidator(
   private val logger: Logger,
-  private val wrapped: DependencyValidator,
+  private val wrapped: DependencyValidator
 ) : DependencyValidator by wrapped {
 
   override fun add(dep: DependencyInfo) {

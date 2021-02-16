@@ -12,7 +12,7 @@ private val SUPPORTED_UNITS = listOf(
   ChronoUnit.DAYS,
   ChronoUnit.HOURS,
   ChronoUnit.MINUTES,
-  ChronoUnit.SECONDS,
+  ChronoUnit.SECONDS
 )
 
 fun Duration.formatApproximate(): String {

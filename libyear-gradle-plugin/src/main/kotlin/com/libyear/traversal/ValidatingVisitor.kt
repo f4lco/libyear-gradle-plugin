@@ -10,7 +10,7 @@ import org.gradle.api.logging.Logger
 class ValidatingVisitor(
   logger: Logger,
   private val ageOracle: AgeOracle,
-  private val validator: DependencyValidator,
+  private val validator: DependencyValidator
 ) : DependencyVisitor(logger) {
 
   override fun canContinue() = validator.isValid()

@@ -11,7 +11,7 @@ class DefaultAgeOracle(
   private val now: Instant,
   private val defaultAdapter: VersionInfoAdapter,
   private val adapters: Map<String, VersionInfoAdapter>,
-  private val repositories: Map<String, ArtifactRepository>,
+  private val repositories: Map<String, ArtifactRepository>
 ) : AgeOracle {
 
   override fun get(module: ModuleVersionIdentifier, repositoryName: String): Duration? {
