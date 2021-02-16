@@ -59,7 +59,7 @@ publishing {
     create<MavenPublication>("pluginMaven") {
       groupId = "org.example.libyear"
       artifactId = "libyear-gradle"
-      version = "0.1"
+      version = "0.0.1-SNAPSHOT"
     }
   }
 }
