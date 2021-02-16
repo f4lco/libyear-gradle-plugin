@@ -1,10 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  kotlin("jvm").version("1.4.20")
+  `kotlin-dsl`
   `java-gradle-plugin`
   `maven-publish`
   id("org.jlleitschuh.gradle.ktlint").version("9.4.1")
+}
+
+kotlinDslPluginOptions {
+  experimentalWarning.set(false)
 }
 
 group = "org.example.libyear"
@@ -37,7 +41,7 @@ repositories {
 }
 
 dependencies {
-  implementation("com.squareup.okhttp3:okhttp:4.9.0")
+  implementation("com.squareup.okhttp3:okhttp:4.8.1")
   implementation("com.fasterxml.jackson.core:jackson-databind:2.9.9")
 
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
