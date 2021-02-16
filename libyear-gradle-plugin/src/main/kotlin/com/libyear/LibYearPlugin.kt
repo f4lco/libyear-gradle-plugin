@@ -32,11 +32,11 @@ class LibYearPlugin : Plugin<Project> {
       return
     }
 
-    project.configurations.all { configureConfiguration(project, it) }
+    project.configurations.all { configureConfiguration(project, this) }
   }
 
   private fun configureConfiguration(project: Project, configuration: Configuration) {
-    configuration.incoming.afterResolve { checkDependencies(project, it) }
+    configuration.incoming.afterResolve { checkDependencies(project, this) }
   }
 
   private fun checkDependencies(
