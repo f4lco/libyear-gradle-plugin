@@ -1,4 +1,4 @@
-package com.libyear.adapters
+package com.libyear.sourcing
 
 import com.libyear.formatApproximate
 import org.assertj.core.api.Assertions.assertThat

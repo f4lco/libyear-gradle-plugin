@@ -1,4 +1,4 @@
-package com.libyear.adapters
+package com.libyear.sourcing
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.HttpUrl
@@ -6,16 +6,17 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.gradle.api.artifacts.ModuleVersionIdentifier
+import org.gradle.api.artifacts.repositories.ArtifactRepository
 import java.time.Instant
 
 class SolrSearchAdapter(
-  private val repoUrl: String
+  private val repoUrl: String,
 ) : VersionInfoAdapter {
 
   private val client = OkHttpClient()
   private val mapper = ObjectMapper()
 
-  override fun getArtifactCreated(m: ModuleVersionIdentifier): Instant? {
+  override fun getArtifactCreated(m: ModuleVersionIdentifier, repository: ArtifactRepository): Instant? {
     val url = buildUrl(m)
     val response = getResponseText(url)
     return response?.let(::parse)

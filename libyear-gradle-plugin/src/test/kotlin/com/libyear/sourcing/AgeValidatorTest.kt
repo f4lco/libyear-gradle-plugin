@@ -1,4 +1,4 @@
-package com.libyear.adapters
+package com.libyear.sourcing
 
 import com.libyear.validator.AgeValidatorSpec
 import com.libyear.validator.DependencyInfo

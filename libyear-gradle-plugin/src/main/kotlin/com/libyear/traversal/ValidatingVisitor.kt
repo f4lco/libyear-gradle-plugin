@@ -1,13 +1,11 @@
 package com.libyear.traversal
 
+import com.libyear.sourcing.AgeOracle
 import com.libyear.validator.DependencyInfo
 import com.libyear.validator.DependencyValidator
-import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.internal.artifacts.result.ResolvedComponentResultInternal
 import org.gradle.api.logging.Logger
-import java.time.Duration
-
-typealias AgeOracle = (ModuleVersionIdentifier) -> Duration
 
 class ValidatingVisitor(
   logger: Logger,
@@ -18,9 +16,16 @@ class ValidatingVisitor(
   override fun canContinue() = validator.isValid()
 
   override fun visitResolvedDependencyResult(result: ResolvedDependencyResult) {
-    result.selected.moduleVersion?.let { version ->
-      val age = ageOracle(version)
-      validator.add(DependencyInfo(version, age))
+    val module = result.selected.moduleVersion ?: return
+    val repositoryName = extractRepositoryName(result) ?: return
+    val age = ageOracle.get(module, repositoryName) ?: return
+    validator.add(DependencyInfo(module, age))
+  }
+
+  private fun extractRepositoryName(result: ResolvedDependencyResult): String? {
+    return when (val dependency = result.selected) {
+      is ResolvedComponentResultInternal -> dependency.repositoryName
+      else -> null
     }
   }
 }

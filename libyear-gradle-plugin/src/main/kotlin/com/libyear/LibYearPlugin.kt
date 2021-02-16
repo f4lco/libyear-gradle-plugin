@@ -1,8 +1,10 @@
 package com.libyear
 
-import com.libyear.adapters.SolrSearchAdapter
-import com.libyear.adapters.VersionInfoAdapter
-import com.libyear.traversal.AgeOracle
+import com.libyear.sourcing.AgeOracle
+import com.libyear.sourcing.DefaultAgeOracle
+import com.libyear.sourcing.HttpUrlAdapter
+import com.libyear.sourcing.SolrSearchAdapter
+import com.libyear.sourcing.VersionInfoAdapter
 import com.libyear.traversal.DependencyTraversal
 import com.libyear.traversal.ValidatingVisitor
 import com.libyear.validator.DependencyValidator
@@ -10,11 +12,12 @@ import com.libyear.validator.LoggingValidator
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ArtifactRepositoryContainer
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvableDependencies
+import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.logging.Logger
 import java.time.Duration
-import java.time.Instant
 
 class LibYearPlugin : Plugin<Project> {
   companion object {
@@ -42,7 +45,7 @@ class LibYearPlugin : Plugin<Project> {
   ) {
 
     val extension = project.extensions.getByName(EXTENSION_NAME) as LibYearExtension
-    val ageOracle = createOracle(extension)
+    val ageOracle = createOracle(project, extension)
     val validator = createValidator(project, extension)
     val visitor = ValidatingVisitor(project.logger, ageOracle, validator)
     DependencyTraversal.visit(resolvableDependencies.resolutionResult.root, visitor)
@@ -53,18 +56,28 @@ class LibYearPlugin : Plugin<Project> {
     return LoggingValidator(project.logger, extension.validator.create())
   }
 
-  private fun createOracle(extension: LibYearExtension): AgeOracle {
-    val adapter = createAdapter(extension)
-    val now: Instant = extension.clock.instant()
-    return { m ->
-      // FIXME nullity
-      val created = adapter.getArtifactCreated(m)
-      Duration.between(created, now)
-    }
+  private fun createOracle(project: Project, extension: LibYearExtension): AgeOracle =
+    DefaultAgeOracle(
+      extension.clock.instant(),
+      HttpUrlAdapter(),
+      collectRepositoryToVersionAdapter(extension),
+      collectAllRepositories(project),
+    )
+
+  private fun collectRepositoryToVersionAdapter(extension: LibYearExtension): Map<String, VersionInfoAdapter> {
+    val adaptersByRepository = defaultAdaptersByRepository().toMutableMap()
+    adaptersByRepository.putAll(extension.versionAdapters)
+    return adaptersByRepository
   }
 
-  private fun createAdapter(extension: LibYearExtension): VersionInfoAdapter {
-    return SolrSearchAdapter.forMavenCentral()
+  private fun defaultAdaptersByRepository() = mapOf<String, VersionInfoAdapter>(
+    ArtifactRepositoryContainer.DEFAULT_MAVEN_CENTRAL_REPO_NAME to SolrSearchAdapter.forMavenCentral(),
+    // FIXME
+    // ArtifactRepositoryContainer.DEFAULT_MAVEN_LOCAL_REPO_NAME to MavenLocalAdapter(),
+  )
+
+  private fun collectAllRepositories(project: Project): Map<String, ArtifactRepository> {
+    return project.repositories.associateBy { it.name }
   }
 
   private fun maybeReportFailure(
