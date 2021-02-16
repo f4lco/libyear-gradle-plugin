@@ -75,6 +75,7 @@ val functionalTestTask = tasks.register<Test>("functionalTest") {
   classpath = functionalTest.runtimeClasspath
   mustRunAfter(tasks.test)
 }
+
 tasks.check {
-  dependsOn(functionalTest)
+  dependsOn(functionalTestTask)
 }
