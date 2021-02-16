@@ -1,3 +1,5 @@
-/.gradle
+.gradle
 /.idea
-/build
+build
+out
+

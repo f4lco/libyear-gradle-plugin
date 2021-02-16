@@ -1,18 +1,18 @@
 package com.libyear.adapters
 
 import com.libyear.formatApproximate
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
-class FormatTest {
+internal class FormatTest {
 
   @ParameterizedTest()
   @MethodSource("samples")
   fun checkDurationFormat(sample: Sample) {
-    assertEquals(sample.formatted, sample.input.formatApproximate())
+    assertThat(sample.input.formatApproximate()).isEqualTo(sample.formatted)
   }
 
   data class Sample(
