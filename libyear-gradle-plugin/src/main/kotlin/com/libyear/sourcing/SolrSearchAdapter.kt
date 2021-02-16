@@ -7,6 +7,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.slf4j.LoggerFactory
+import java.io.IOException
 import java.time.Instant
 
 class SolrSearchAdapter(
@@ -34,10 +36,14 @@ class SolrSearchAdapter(
 
   private fun getResponseText(url: HttpUrl): String? {
     val request = Request.Builder().url(url).build()
-    client.newCall(request).execute().use { response ->
-      if (response.isSuccessful) {
-        return response.body?.string()
+    try {
+      client.newCall(request).execute().use { response ->
+        if (response.isSuccessful) {
+          return response.body?.string()
+        }
       }
+    } catch (e: IOException) {
+      LOG.debug("SOLR search request failed for URL {}", url, e)
     }
     return null
   }
@@ -53,6 +59,8 @@ class SolrSearchAdapter(
   }
 
   companion object {
+    private val LOG = LoggerFactory.getLogger(SolrSearchAdapter::class.java)
+
     fun forMavenCentral() = SolrSearchAdapter(
       repoUrl = "https://search.maven.org/solrsearch/select"
     )
