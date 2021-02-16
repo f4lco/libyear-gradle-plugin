@@ -12,6 +12,23 @@ import java.io.IOException
 import java.lang.IllegalArgumentException
 import java.time.Instant
 
+/**
+ * Retrieve artifact creation dates from HTTP repositories.
+ *
+ * In comparison to the adapter for repositories with Solr Search (namely Maven Central) this method
+ * work with arbitrary repositories which are served via HTTP.
+ * This strategy assume that the content of the Last-Modified HTTP header correlates with the creation date of the artifact.
+ *
+ * *Caveats*
+ *
+ * 1. The information of the Last-Modified HTTP header may not correlate to the artifact creation date or change over time.
+ *
+ * 2. Because Gradle API does not expose the qualifier of the dependency, the strategy assumes "jar" by default.
+ *    To work with other qualifiers such as "pom", this strategy requires customization via [RepositoryLayout].
+ *
+ * 3. Because Gradle does not expose "turn this module version identifier into a URL" as part of its public API, this strategy
+ *    assumes a standard one. Please see [DefaultRepositoryLayout] for details of how the artifact URLs are formed.
+ */
 class HttpUrlAdapter(private val repositoryLayout: RepositoryLayout = DefaultRepositoryLayout) : VersionInfoAdapter {
 
   private val client = OkHttpClient()
@@ -45,10 +62,23 @@ class HttpUrlAdapter(private val repositoryLayout: RepositoryLayout = DefaultRep
   }
 }
 
+/**
+ * How to find the absolute artifact URL given a base URL and module identifier?
+ */
 interface RepositoryLayout {
   fun getArtifactUrl(repositoryBaseUrl: HttpUrl, module: ModuleVersionIdentifier): HttpUrl
 }
 
+/**
+ * Most common repository layout in which each part of the hierarchical name is a subdirectory.
+ *
+ * Example:
+ *
+ * ```
+ * input = "org.apache.commons:commons-text:1.8"
+ * output = baseUrl + "/org/apache/commons/commons-text/1.8/commons-text-1.8.jar"
+ * ```
+ */
 object DefaultRepositoryLayout : RepositoryLayout {
   override fun getArtifactUrl(repositoryBaseUrl: HttpUrl, module: ModuleVersionIdentifier) =
     repositoryBaseUrl.newBuilder().apply {
