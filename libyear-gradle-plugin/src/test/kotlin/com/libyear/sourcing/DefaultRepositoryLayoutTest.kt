@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 internal class DefaultRepositoryLayoutTest {
 
   @Test
-  internal fun testApacheCommonsUrl() {
+  fun testApacheCommonsUrl() {
     val baseUrl = "https://repo.example.org".toHttpUrl()
 
     val url = DefaultRepositoryLayout.getArtifactUrl(baseUrl, Fixtures.apacheCommonsTextArtifact)

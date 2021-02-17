@@ -22,7 +22,7 @@ internal class HttpUrlAdapterTest {
   private lateinit var repo: MavenArtifactRepository
 
   @BeforeEach
-  internal fun setUp() {
+  fun setUp() {
     server = MockWebServer()
     adapter = HttpUrlAdapter()
     repo = mock(MavenArtifactRepository::class.java)
@@ -30,12 +30,12 @@ internal class HttpUrlAdapterTest {
   }
 
   @AfterEach
-  internal fun tearDown() {
+  fun tearDown() {
     server.close()
   }
 
   @Test
-  internal fun testOnline() {
+  fun testOnline() {
     val headers = Headers.headersOf().newBuilder().add("Last-Modified", now).build()
     server.enqueue(MockResponse().setHeaders(headers))
 
@@ -45,7 +45,7 @@ internal class HttpUrlAdapterTest {
   }
 
   @Test
-  internal fun testTimeout() {
+  fun testTimeout() {
     // nothing enqueued
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
@@ -54,7 +54,7 @@ internal class HttpUrlAdapterTest {
   }
 
   @Test
-  internal fun serverError() {
+  fun serverError() {
     server.enqueue(MockResponse().setResponseCode(500))
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
@@ -63,7 +63,7 @@ internal class HttpUrlAdapterTest {
   }
 
   @Test
-  internal fun notFound() {
+  fun notFound() {
     server.enqueue(MockResponse().setResponseCode(404))
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
@@ -72,7 +72,7 @@ internal class HttpUrlAdapterTest {
   }
 
   @Test
-  internal fun headerNotPresent() {
+  fun headerNotPresent() {
     server.enqueue(MockResponse())
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)

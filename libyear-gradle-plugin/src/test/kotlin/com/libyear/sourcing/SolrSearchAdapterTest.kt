@@ -17,19 +17,19 @@ internal class SolrSearchAdapterTest {
   private lateinit var repo: MavenArtifactRepository
 
   @BeforeEach
-  internal fun setUp() {
+  fun setUp() {
     server = MockWebServer()
     adapter = SolrSearchAdapter(server.url("artifacts").toString())
     repo = mock(MavenArtifactRepository::class.java)
   }
 
   @AfterEach
-  internal fun tearDown() {
+  fun tearDown() {
     server.close()
   }
 
   @Test
-  internal fun testOnline() {
+  fun testOnline() {
     server.enqueue(
       MockResponse().setBody(
         """
@@ -92,7 +92,7 @@ internal class SolrSearchAdapterTest {
   }
 
   @Test
-  internal fun testTimeout() {
+  fun testTimeout() {
     // nothing enqueued
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
@@ -101,7 +101,7 @@ internal class SolrSearchAdapterTest {
   }
 
   @Test
-  internal fun serverError() {
+  fun serverError() {
     server.enqueue(MockResponse().setResponseCode(500))
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
@@ -110,7 +110,7 @@ internal class SolrSearchAdapterTest {
   }
 
   @Test
-  internal fun notFound() {
+  fun notFound() {
     server.enqueue(MockResponse().setResponseCode(404))
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
@@ -119,7 +119,7 @@ internal class SolrSearchAdapterTest {
   }
 
   @Test
-  internal fun noDocumentsResponse() {
+  fun noDocumentsResponse() {
     server.enqueue(
       MockResponse().setBody(
         """
@@ -155,7 +155,7 @@ internal class SolrSearchAdapterTest {
   }
 
   @Test
-  internal fun emptySearchResponse() {
+  fun emptySearchResponse() {
     server.enqueue(MockResponse().setBody(""))
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
