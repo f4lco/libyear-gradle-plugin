@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   `kotlin-dsl`
   `java-gradle-plugin`
-  `maven-publish`
+  id("com.gradle.plugin-publish").version("0.12.0")
   id("org.jlleitschuh.gradle.ktlint").version("9.4.1")
 }
 
@@ -11,8 +11,8 @@ kotlinDslPluginOptions {
   experimentalWarning.set(false)
 }
 
-group = "org.example.libyear"
-version = "0.1"
+group = "com.libyear"
+version = "0.0.1-SNAPSHOT"
 
 val functionalTest by sourceSets.creating
 
@@ -27,13 +27,33 @@ tasks.withType(KotlinCompile::class) {
 
 gradlePlugin {
   plugins {
-    create("libyear") {
-      id = "org.example.libyear-gradle"
+    create("libyearPlugin") {
+      id = "com.libyear.libyear-gradle-plugin"
       implementationClass = "com.libyear.LibYearPlugin"
     }
   }
 
   testSourceSets(functionalTest)
+}
+
+pluginBundle {
+  website = "https://libyear.com/"
+  vcsUrl = "https://github.com/f4lco/libyear-gradle-plugin"
+  description = "Measure libyears of your application"
+  tags = listOf(
+    "dependency",
+    "dependencies",
+    "dependency-insight",
+    "dependency-analysis",
+    "libyear",
+    "age"
+  )
+
+  (plugins) {
+    "libyearPlugin" {
+      displayName = "Libyear Plugin"
+    }
+  }
 }
 
 repositories {
@@ -52,16 +72,6 @@ dependencies {
   "functionalTestImplementation"("org.junit.jupiter:junit-jupiter-api:5.7.0")
   "functionalTestImplementation"("org.assertj:assertj-core:3.18.1")
   "functionalTestRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:5.7.0")
-}
-
-publishing {
-  publications {
-    create<MavenPublication>("pluginMaven") {
-      groupId = "org.example.libyear"
-      artifactId = "libyear-gradle"
-      version = "0.0.1-SNAPSHOT"
-    }
-  }
 }
 
 tasks.withType(Test::class) {

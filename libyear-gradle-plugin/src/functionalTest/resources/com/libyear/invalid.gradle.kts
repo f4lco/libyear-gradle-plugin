@@ -7,7 +7,7 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 plugins {
-  id("org.example.libyear-gradle")
+  id("com.libyear.libyear-gradle-plugin")
   java
 }
 
