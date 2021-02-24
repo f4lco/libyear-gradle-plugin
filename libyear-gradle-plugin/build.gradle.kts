@@ -1,18 +1,36 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import pl.allegro.tech.build.axion.release.domain.RepositoryConfig
+import pl.allegro.tech.build.axion.release.domain.TagNameSerializationConfig
 
 plugins {
   `kotlin-dsl`
   `java-gradle-plugin`
   id("com.gradle.plugin-publish").version("0.12.0")
   id("org.jlleitschuh.gradle.ktlint").version("9.4.1")
+  id("pl.allegro.tech.build.axion-release").version("1.12.1")
 }
 
 kotlinDslPluginOptions {
   experimentalWarning.set(false)
 }
 
+scmVersion {
+  repository(
+    closureOf<RepositoryConfig> {
+      directory = project.rootProject.file("..")
+    }
+  )
+
+  tag(
+    closureOf<TagNameSerializationConfig> {
+      prefix = "v"
+      versionSeparator = ""
+    }
+  )
+}
+
 group = "com.libyear"
-version = "0.0.1-SNAPSHOT"
+version = scmVersion.version
 
 val functionalTest by sourceSets.creating
 
