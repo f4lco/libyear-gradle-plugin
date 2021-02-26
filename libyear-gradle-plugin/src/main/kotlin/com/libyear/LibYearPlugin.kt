@@ -3,6 +3,7 @@ package com.libyear
 import com.libyear.sourcing.AgeOracle
 import com.libyear.sourcing.DefaultAgeOracle
 import com.libyear.sourcing.HttpUrlAdapter
+import com.libyear.sourcing.MavenLocalAdapter
 import com.libyear.sourcing.SolrSearchAdapter
 import com.libyear.sourcing.VersionInfoAdapter
 import com.libyear.traversal.DependencyTraversal
@@ -70,10 +71,9 @@ class LibYearPlugin : Plugin<Project> {
     return adaptersByRepository
   }
 
-  private fun defaultAdaptersByRepository() = mapOf<String, VersionInfoAdapter>(
-    ArtifactRepositoryContainer.DEFAULT_MAVEN_CENTRAL_REPO_NAME to SolrSearchAdapter.forMavenCentral()
-    // FIXME
-    // ArtifactRepositoryContainer.DEFAULT_MAVEN_LOCAL_REPO_NAME to MavenLocalAdapter(),
+  private fun defaultAdaptersByRepository() = mapOf(
+    ArtifactRepositoryContainer.DEFAULT_MAVEN_CENTRAL_REPO_NAME to SolrSearchAdapter.forMavenCentral(),
+    ArtifactRepositoryContainer.DEFAULT_MAVEN_LOCAL_REPO_NAME to MavenLocalAdapter()
   )
 
   private fun collectAllRepositories(project: Project): Map<String, ArtifactRepository> {
