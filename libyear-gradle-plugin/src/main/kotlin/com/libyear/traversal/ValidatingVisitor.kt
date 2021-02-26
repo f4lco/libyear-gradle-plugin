@@ -8,6 +8,7 @@ import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.internal.artifacts.result.ResolvedComponentResultInternal
 import org.gradle.api.logging.Logger
+import org.slf4j.LoggerFactory
 
 data class ValidationConfig(
   val failOnError: Boolean = true
@@ -42,14 +43,24 @@ class ValidatingVisitor(
   }
 
   private fun handleFailure(repositoryName: String, module: ModuleVersionIdentifier, failure: Throwable) {
+    val baseMessage =
+      """Cannot determine dependency age for "$module" and repository "$repositoryName" (reason: ${failure::class.simpleName})."""
     if (config.failOnError) {
       throw GradleException(
         """
-        Cannot determine dependency age for "$module" and repository "$repositoryName".
+        $baseMessage
         If errors should be skipped, set failOnError=false in the plugin configuration.
         """.trimIndent(),
         failure
       )
     }
+
+    // deliberately omitting 'failure' as last parameter: the log message with a full stack trace is far too noisy.
+    // If the stack trace is important, set config.failOnError = true and run Gradle with --stacktrace.
+    LOG.warn(baseMessage)
+  }
+
+  companion object {
+    private val LOG = LoggerFactory.getLogger(ValidatingVisitor::class.java)
   }
 }
