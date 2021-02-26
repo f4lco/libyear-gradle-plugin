@@ -9,13 +9,13 @@ class LoggingValidator(
 ) : DependencyValidator by wrapped {
 
   override fun add(dep: DependencyInfo) {
-    logger.lifecycle("Adding {} of age {}", dep.version, dep.age.formatApproximate())
+    logger.debug("Adding {} of age {}", dep.version, dep.age.formatApproximate())
     wrapped.add(dep)
   }
 
   override fun isValid(): Boolean {
     val valid = wrapped.isValid()
-    logger.lifecycle("Validator [{}] valid: {}", wrapped, valid)
+    logger.debug("Validator [{}] valid: {}", wrapped, valid)
     return valid
   }
 }
