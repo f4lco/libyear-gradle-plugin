@@ -1,23 +1,55 @@
 package com.libyear
 
 import com.libyear.sourcing.VersionInfoAdapter
+import com.libyear.validator.AgeValidatorSpec
 import com.libyear.validator.CumulativeAgeValidatorSpec
 import com.libyear.validator.DependencyValidatorSpec
 import java.time.Clock
 import java.time.Duration
+import java.time.LocalDate
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
 open class LibYearExtension {
 
-  companion object {
-    val DEFAULT_MAX_AGE: Duration = ChronoUnit.YEARS.duration.multipliedBy(10)
-  }
+  // Settings
 
   var versionAdapters = mutableMapOf<String, VersionInfoAdapter>()
 
   var failOnError: Boolean = true
 
-  var validator: DependencyValidatorSpec = CumulativeAgeValidatorSpec(DEFAULT_MAX_AGE)
+  var validator: DependencyValidatorSpec = defaultValidator
 
   var clock: Clock = Clock.systemUTC()
+
+  // DSL for build script authors
+
+  val defaultValidator: DependencyValidatorSpec get() = CumulativeAgeValidatorSpec(DEFAULT_MAX_AGE)
+
+  fun allArtifactsCombinedMustNotBeOlderThan(maxAge: Duration): DependencyValidatorSpec {
+    return CumulativeAgeValidatorSpec(maxAge)
+  }
+
+  fun singleArtifactMustNotBeOlderThan(maxAge: Duration): DependencyValidatorSpec {
+    return AgeValidatorSpec(maxAge)
+  }
+
+  fun fixedClock(year: Int, month: Int, dayOfMonth: Int): Clock = Clock.fixed(
+    LocalDate.of(
+      year,
+      month,
+      dayOfMonth
+    ).atStartOfDay().toInstant(ZoneOffset.UTC),
+    ZoneOffset.UTC
+  )
+
+  val Int.days: Duration get() = ChronoUnit.DAYS.duration.multipliedBy(this.toLong())
+
+  val Int.months: Duration get() = ChronoUnit.MONTHS.duration.multipliedBy(this.toLong())
+
+  val Int.years: Duration get() = ChronoUnit.YEARS.duration.multipliedBy(this.toLong())
+
+  companion object {
+    val DEFAULT_MAX_AGE: Duration = ChronoUnit.YEARS.duration.multipliedBy(10)
+  }
 }

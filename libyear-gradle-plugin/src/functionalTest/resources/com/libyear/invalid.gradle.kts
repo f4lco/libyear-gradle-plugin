@@ -1,11 +1,3 @@
-import java.time.Clock
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
-
 plugins {
   id("com.libyear.libyear-gradle-plugin")
   java
@@ -21,9 +13,7 @@ dependencies {
 }
 
 libyear {
-  clock = Clock.fixed(LocalDate.of(2020, 12, 11).atStartOfDay().toInstant(ZoneOffset.UTC), ZoneOffset.UTC)
+  clock = fixedClock(2020, 12, 11)
   failOnError = true
-  // validator = com.libyear.validator.CumulativeAgeValidatorSpec(ChronoUnit.MONTHS.duration.multipliedBy(5))
-  validator = com.libyear.validator.AgeValidatorSpec(ChronoUnit.YEARS.duration.multipliedBy(1))
-  //validator = com.libyear.validator.AgeValidatorSpec(Duration.ofDays(1))
+  validator = singleArtifactMustNotBeOlderThan(1.years)
 }

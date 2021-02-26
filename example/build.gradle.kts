@@ -1,7 +1,3 @@
-import java.time.Duration
-import java.time.Period
-import java.time.temporal.ChronoUnit
-
 plugins {
   id("com.libyear.libyear-gradle-plugin")
   java
@@ -17,8 +13,8 @@ dependencies {
 }
 
 libyear {
-  failOnError = true
-  // validator = com.libyear.validator.CumulativeAgeValidatorSpec(ChronoUnit.MONTHS.duration.multipliedBy(5))
-  validator = com.libyear.validator.AgeValidatorSpec(ChronoUnit.YEARS.duration.multipliedBy(5))
-  //validator = com.libyear.validator.AgeValidatorSpec(Duration.ofDays(1))
+  failOnError = false
+  // validator = allArtifactsCombinedMustNotBeOlderThan(5.months)
+  validator = singleArtifactMustNotBeOlderThan(5.years)
+  // validator = singleArtifactMustNotBeOlderThan((1.days)
 }
