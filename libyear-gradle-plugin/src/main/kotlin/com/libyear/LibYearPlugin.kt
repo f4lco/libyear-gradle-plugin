@@ -66,9 +66,7 @@ class LibYearPlugin : Plugin<Project> {
     )
 
   private fun collectRepositoryToVersionAdapter(extension: LibYearExtension): Map<String, VersionInfoAdapter> {
-    val adaptersByRepository = defaultAdaptersByRepository().toMutableMap()
-    adaptersByRepository.putAll(extension.versionAdapters)
-    return adaptersByRepository
+    return defaultAdaptersByRepository() + extension.versionAdapters
   }
 
   private fun defaultAdaptersByRepository() = mapOf(

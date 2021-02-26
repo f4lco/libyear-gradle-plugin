@@ -7,6 +7,12 @@ import java.lang.IllegalArgumentException
 import java.time.Duration
 import java.time.Instant
 
+/**
+ * Turn artifact creation dates into artifact ages.
+ *
+ * Adapter selection: the algorithm prefers to select an adapter by name of the repository Gradle has
+ * sourced the artifact from, see [adapters]. If none is present, [defaultAdapter] is queried.
+ */
 class DefaultAgeOracle(
   private val now: Instant,
   private val defaultAdapter: VersionInfoAdapter,
@@ -18,7 +24,7 @@ class DefaultAgeOracle(
     val adapter = selectAdapter(repositoryName)
     val repository = repositories[repositoryName] ?: throw IllegalArgumentException("Cannot find repository $repositoryName")
     val created = adapter.getArtifactCreated(module, repository)
-    return Duration.between(created, now)
+    return created?.let { Duration.between(it, now) }
   }
 
   private fun selectAdapter(repositoryName: String): VersionInfoAdapter {
