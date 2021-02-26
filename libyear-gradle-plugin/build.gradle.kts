@@ -79,6 +79,7 @@ repositories {
 }
 
 dependencies {
+  implementation("io.vavr:vavr:0.10.3")
   implementation("com.squareup.okhttp3:okhttp:4.8.1")
   implementation("com.fasterxml.jackson.core:jackson-databind:2.9.9")
 

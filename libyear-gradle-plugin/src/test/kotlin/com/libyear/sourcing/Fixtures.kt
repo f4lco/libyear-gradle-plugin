@@ -5,7 +5,6 @@ import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.artifacts.repositories.RepositoryContentDescriptor
 import org.gradle.api.internal.artifacts.DefaultModuleVersionIdentifier.newId
-import java.lang.UnsupportedOperationException
 
 internal object Fixtures {
 

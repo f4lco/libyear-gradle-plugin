@@ -1,9 +1,9 @@
 package com.libyear.sourcing
 
+import io.vavr.control.Try
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.slf4j.LoggerFactory
-import java.lang.IllegalArgumentException
 import java.time.Duration
 import java.time.Instant
 
@@ -20,11 +20,11 @@ class DefaultAgeOracle(
   private val repositories: Map<String, ArtifactRepository>
 ) : AgeOracle {
 
-  override fun get(module: ModuleVersionIdentifier, repositoryName: String): Duration? {
+  override fun get(module: ModuleVersionIdentifier, repositoryName: String): Try<Duration> {
     val adapter = selectAdapter(repositoryName)
     val repository = repositories[repositoryName] ?: throw IllegalArgumentException("Cannot find repository $repositoryName")
     val created = adapter.getArtifactCreated(module, repository)
-    return created?.let { Duration.between(it, now) }
+    return created.map { Duration.between(it, now) }
   }
 
   private fun selectAdapter(repositoryName: String): VersionInfoAdapter {

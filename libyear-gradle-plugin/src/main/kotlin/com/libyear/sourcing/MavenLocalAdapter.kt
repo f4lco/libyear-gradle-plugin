@@ -1,5 +1,6 @@
 package com.libyear.sourcing
 
+import io.vavr.control.Try
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.slf4j.LoggerFactory
@@ -14,11 +15,11 @@ class MavenLocalAdapter : VersionInfoAdapter {
 
   private val once = AtomicBoolean()
 
-  override fun getArtifactCreated(m: ModuleVersionIdentifier, repository: ArtifactRepository): Instant? {
+  override fun getArtifactCreated(m: ModuleVersionIdentifier, repository: ArtifactRepository): Try<Instant> {
     if (once.compareAndSet(false, true)) {
       LOG.warn("Extracting artifact creation dates from the Maven local repository is unreliable and therefore not supported.")
     }
-    return null
+    return Try.failure(UnsupportedOperationException("Maven local repository not supported"))
   }
 
   companion object {

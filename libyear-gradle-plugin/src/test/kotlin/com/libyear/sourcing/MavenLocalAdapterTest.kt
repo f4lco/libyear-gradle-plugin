@@ -17,6 +17,6 @@ class MavenLocalAdapterTest {
   fun testCreatedIsNull() {
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, Fixtures.stubRepository)
 
-    assertThat(created).isNull()
+    assertThat(created).isEmpty()
   }
 }

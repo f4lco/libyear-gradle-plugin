@@ -88,7 +88,7 @@ internal class SolrSearchAdapterTest {
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
 
-    assertThat(created).isEqualTo(Instant.ofEpochMilli(1595364048000))
+    assertThat(created).first().isEqualTo(Instant.ofEpochMilli(1595364048000))
   }
 
   @Test
@@ -97,7 +97,7 @@ internal class SolrSearchAdapterTest {
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
 
-    assertThat(created).isNull()
+    assertThat(created).isEmpty()
   }
 
   @Test
@@ -106,7 +106,7 @@ internal class SolrSearchAdapterTest {
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
 
-    assertThat(created).isNull()
+    assertThat(created).isEmpty()
   }
 
   @Test
@@ -115,7 +115,7 @@ internal class SolrSearchAdapterTest {
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
 
-    assertThat(created).isNull()
+    assertThat(created).isEmpty()
   }
 
   @Test
@@ -151,7 +151,7 @@ internal class SolrSearchAdapterTest {
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
 
-    assertThat(created).isNull()
+    assertThat(created).isEmpty()
   }
 
   @Test
@@ -160,6 +160,6 @@ internal class SolrSearchAdapterTest {
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
 
-    assertThat(created).isNull()
+    assertThat(created).isEmpty()
   }
 }

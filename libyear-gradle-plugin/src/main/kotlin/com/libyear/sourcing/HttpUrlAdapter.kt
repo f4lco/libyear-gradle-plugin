@@ -1,5 +1,6 @@
 package com.libyear.sourcing
 
+import io.vavr.control.Try
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
@@ -7,9 +8,7 @@ import okhttp3.Request
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.artifacts.repositories.UrlArtifactRepository
-import org.slf4j.LoggerFactory
 import java.io.IOException
-import java.lang.IllegalArgumentException
 import java.time.Instant
 
 /**
@@ -33,10 +32,10 @@ class HttpUrlAdapter(private val repositoryLayout: RepositoryLayout = DefaultRep
 
   private val client = OkHttpClient()
 
-  override fun getArtifactCreated(m: ModuleVersionIdentifier, repository: ArtifactRepository): Instant? {
-    if (repository !is UrlArtifactRepository) throw IllegalArgumentException()
+  override fun getArtifactCreated(m: ModuleVersionIdentifier, repository: ArtifactRepository) = Try.of {
+    if (repository !is UrlArtifactRepository) throw IllegalArgumentException("$repository is not an URL repository")
     val url = buildUrl(repository, m)
-    return getLastModified(url)
+    getLastModified(url)
   }
 
   private fun buildUrl(repository: UrlArtifactRepository, module: ModuleVersionIdentifier): HttpUrl {
@@ -44,21 +43,16 @@ class HttpUrlAdapter(private val repositoryLayout: RepositoryLayout = DefaultRep
     return repositoryLayout.getArtifactUrl(repoUrl, module)
   }
 
-  private fun getLastModified(url: HttpUrl): Instant? {
+  private fun getLastModified(url: HttpUrl): Instant {
     val request = Request.Builder().url(url).head().build()
-    try {
-      client.newCall(request).execute().use { response ->
-        if (response.isSuccessful) return response.headers.getInstant("Last-Modified")
+    client.newCall(request).execute().use { response ->
+
+      if (!response.isSuccessful) {
+        throw IOException("Response for URL $url returned ${response.code}")
       }
-    } catch (e: IOException) {
-      LOG.debug("HEAD request to {} failed", url, e)
+
+      return response.headers.getInstant("Last-Modified") ?: throw IllegalArgumentException("Response for URL $url did not contain a Last-Modified header")
     }
-
-    return null
-  }
-
-  companion object {
-    private val LOG = LoggerFactory.getLogger(HttpUrlAdapter::class.java)
   }
 }
 

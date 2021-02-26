@@ -8,6 +8,7 @@ import com.libyear.sourcing.SolrSearchAdapter
 import com.libyear.sourcing.VersionInfoAdapter
 import com.libyear.traversal.DependencyTraversal
 import com.libyear.traversal.ValidatingVisitor
+import com.libyear.traversal.ValidationConfig
 import com.libyear.validator.DependencyValidator
 import com.libyear.validator.LoggingValidator
 import org.gradle.api.GradleException
@@ -48,7 +49,7 @@ class LibYearPlugin : Plugin<Project> {
     val extension = project.extensions.getByName(EXTENSION_NAME) as LibYearExtension
     val ageOracle = createOracle(project, extension)
     val validator = createValidator(project, extension)
-    val visitor = ValidatingVisitor(project.logger, ageOracle, validator)
+    val visitor = ValidatingVisitor(project.logger, ageOracle, validator, ValidationConfig(failOnError = extension.failOnError))
     DependencyTraversal.visit(resolvableDependencies.resolutionResult.root, visitor)
     maybeReportFailure(project.logger, validator)
   }

@@ -12,7 +12,7 @@ internal class MavenCentralTest {
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, Fixtures.stubRepository)
 
-    assertThat(created).isEqualTo(Instant.ofEpochMilli(1595364048000))
+    assertThat(created).first().isEqualTo(Instant.ofEpochMilli(1595364048000))
   }
 
   @Test
@@ -21,6 +21,6 @@ internal class MavenCentralTest {
 
     val created = adapter.getArtifactCreated(Fixtures.notExistingArtifact, Fixtures.stubRepository)
 
-    assertThat(created).isNull()
+    assertThat(created).isEmpty()
   }
 }

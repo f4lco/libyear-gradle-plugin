@@ -1,5 +1,6 @@
 package com.libyear.sourcing
 
+import io.vavr.control.Try
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.repositories.ArtifactRepository
@@ -19,10 +20,12 @@ class DefaultAgeOracleTest {
 
     val age = oracle.get(Fixtures.apacheCommonsTextArtifact, Fixtures.stubRepository.name)
 
-    assertThat(age).isNull()
+    assertThat(age).isEmpty()
   }
 
   private object DummyAdapter : VersionInfoAdapter {
-    override fun getArtifactCreated(m: ModuleVersionIdentifier, repository: ArtifactRepository) = null
+    override fun getArtifactCreated(m: ModuleVersionIdentifier, repository: ArtifactRepository): Try<Instant> {
+      return Try.failure(UnsupportedOperationException())
+    }
   }
 }

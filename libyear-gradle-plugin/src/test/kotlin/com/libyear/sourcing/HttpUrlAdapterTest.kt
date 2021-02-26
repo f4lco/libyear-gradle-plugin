@@ -41,7 +41,7 @@ internal class HttpUrlAdapterTest {
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
 
-    assertThat(created).isEqualTo(now.truncatedTo(ChronoUnit.SECONDS))
+    assertThat(created).first().isEqualTo(now.truncatedTo(ChronoUnit.SECONDS))
   }
 
   @Test
@@ -50,7 +50,7 @@ internal class HttpUrlAdapterTest {
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
 
-    assertThat(created).isNull()
+    assertThat(created).isEmpty()
   }
 
   @Test
@@ -59,7 +59,7 @@ internal class HttpUrlAdapterTest {
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
 
-    assertThat(created).isNull()
+    assertThat(created).isEmpty()
   }
 
   @Test
@@ -68,7 +68,7 @@ internal class HttpUrlAdapterTest {
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
 
-    assertThat(created).isNull()
+    assertThat(created).isEmpty()
   }
 
   @Test
@@ -77,6 +77,6 @@ internal class HttpUrlAdapterTest {
 
     val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
 
-    assertThat(created).isNull()
+    assertThat(created).isEmpty()
   }
 }
