@@ -1,6 +1,6 @@
 package com.libyear.validator
 
-import com.libyear.formatApproximate
+import com.libyear.util.formatApproximate
 import org.gradle.api.logging.Logger
 
 class LoggingValidator(

@@ -1,4 +1,4 @@
-package com.libyear
+package com.libyear.util
 
 import java.text.NumberFormat
 import java.time.Duration

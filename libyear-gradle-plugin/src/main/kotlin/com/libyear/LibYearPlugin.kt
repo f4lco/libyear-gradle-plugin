@@ -9,6 +9,7 @@ import com.libyear.sourcing.VersionInfoAdapter
 import com.libyear.traversal.DependencyTraversal
 import com.libyear.traversal.ValidatingVisitor
 import com.libyear.traversal.ValidationConfig
+import com.libyear.util.formatApproximate
 import com.libyear.validator.DependencyValidator
 import com.libyear.validator.LoggingValidator
 import org.gradle.api.GradleException

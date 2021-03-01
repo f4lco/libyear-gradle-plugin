@@ -1,6 +1,6 @@
 package com.libyear.sourcing
 
-import com.libyear.formatApproximate
+import com.libyear.util.formatApproximate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
