@@ -22,7 +22,11 @@ open class LibYearExtension {
 
   var clock: Clock = Clock.systemUTC()
 
+  var configurations: List<String> = defaultConfigurations
+
   // DSL for build script authors
+
+  val defaultConfigurations: List<String> get() = listOf("compileClasspath")
 
   val defaultValidator: DependencyValidatorSpec get() = CumulativeAgeValidatorSpec(DEFAULT_MAX_AGE)
 

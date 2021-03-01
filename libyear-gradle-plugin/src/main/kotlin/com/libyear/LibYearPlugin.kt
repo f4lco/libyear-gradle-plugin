@@ -38,20 +38,27 @@ class LibYearPlugin : Plugin<Project> {
   }
 
   private fun configureConfiguration(project: Project, configuration: Configuration) {
-    configuration.incoming.afterResolve { checkDependencies(project, this) }
+    configuration.incoming.afterResolve { checkDependencies(project, configuration, this) }
   }
 
   private fun checkDependencies(
     project: Project,
+    configuration: Configuration,
     resolvableDependencies: ResolvableDependencies
   ) {
 
     val extension = project.extensions.getByName(EXTENSION_NAME) as LibYearExtension
+    if (skip(configuration, extension)) return
+
     val ageOracle = createOracle(project, extension)
     val validator = createValidator(project, extension)
     val visitor = ValidatingVisitor(project.logger, ageOracle, validator, ValidationConfig(failOnError = extension.failOnError))
     DependencyTraversal.visit(resolvableDependencies.resolutionResult.root, visitor)
     maybeReportFailure(project.logger, validator)
+  }
+
+  private fun skip(configuration: Configuration, extension: LibYearExtension): Boolean {
+    return configuration.name !in extension.configurations
   }
 
   private fun createValidator(project: Project, extension: LibYearExtension): DependencyValidator {
