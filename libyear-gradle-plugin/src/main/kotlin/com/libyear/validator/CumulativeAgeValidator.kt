@@ -1,7 +1,6 @@
 package com.libyear.validator
 
 import java.time.Duration
-import java.util.PriorityQueue
 
 data class CumulativeAgeValidatorSpec(
   val maxAge: Duration
@@ -12,7 +11,7 @@ data class CumulativeAgeValidatorSpec(
 
 class CumulativeAgeValidator(val spec: CumulativeAgeValidatorSpec) : DependencyValidator {
 
-  private val collected = PriorityQueue(byAgeDescending())
+  private val collected = mutableListOf<DependencyInfo>()
 
   fun cumulativeAge(): Duration = collected.map { it.age }.fold(Duration.ZERO, Duration::plus)
 
@@ -24,17 +23,9 @@ class CumulativeAgeValidator(val spec: CumulativeAgeValidatorSpec) : DependencyV
 
   override fun threshold() = spec.maxAge
 
-  override fun violators(): List<DependencyInfo> {
-    return collected.toList()
-  }
+  override fun violators() = collected.sortedByDescending { it.age }
 
   override fun toString(): String {
     return "CumulativeAgeValidator(spec=$spec, duration=${cumulativeAge()})"
-  }
-
-  companion object {
-    private fun byAgeDescending(): Comparator<DependencyInfo> {
-      return Comparator.comparing<DependencyInfo, Duration> { it.age }.reversed()
-    }
   }
 }
