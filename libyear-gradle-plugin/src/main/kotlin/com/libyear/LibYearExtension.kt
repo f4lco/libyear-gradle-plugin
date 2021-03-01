@@ -47,11 +47,15 @@ open class LibYearExtension {
     ZoneOffset.UTC
   )
 
+  // extension properties for Kotlin DSL
   val Int.days: Duration get() = ChronoUnit.DAYS.duration.multipliedBy(this.toLong())
-
   val Int.months: Duration get() = ChronoUnit.MONTHS.duration.multipliedBy(this.toLong())
-
   val Int.years: Duration get() = ChronoUnit.YEARS.duration.multipliedBy(this.toLong())
+
+  // simple methods for Groovy build scripts
+  fun days(x: Int): Duration = ChronoUnit.DAYS.duration.multipliedBy(x.toLong())
+  fun months(x: Int): Duration = ChronoUnit.MONTHS.duration.multipliedBy(x.toLong())
+  fun years(x: Int): Duration = ChronoUnit.YEARS.duration.multipliedBy(x.toLong())
 
   companion object {
     val DEFAULT_MAX_AGE: Duration = ChronoUnit.YEARS.duration.multipliedBy(10)

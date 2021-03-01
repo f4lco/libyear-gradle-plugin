@@ -1,0 +1,10 @@
+plugins {
+  id 'com.libyear.libyear-gradle-plugin'
+  id 'java'
+}
+
+libyear {
+  configurations = ['compileClasspath']
+  failOnError = true
+  validator = allArtifactsCombinedMustNotBeOlderThan(days(5))
+}
