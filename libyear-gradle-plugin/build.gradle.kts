@@ -7,7 +7,7 @@ plugins {
   `java-gradle-plugin`
   id("com.gradle.plugin-publish").version("0.12.0")
   id("org.jlleitschuh.gradle.ktlint").version("9.4.1")
-  id("pl.allegro.tech.build.axion-release").version("1.12.1")
+  id("pl.allegro.tech.build.axion-release").version("1.10.3")
 }
 
 kotlinDslPluginOptions {
