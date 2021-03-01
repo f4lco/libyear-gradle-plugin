@@ -20,6 +20,8 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.logging.Logger
+import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.register
 import java.time.Duration
 
 class LibYearPlugin : Plugin<Project> {
@@ -28,7 +30,7 @@ class LibYearPlugin : Plugin<Project> {
   }
 
   override fun apply(project: Project) {
-    project.extensions.create(EXTENSION_NAME, LibYearExtension::class.java)
+    project.extensions.create<LibYearExtension>(EXTENSION_NAME)
 
     if (project.gradle.startParameter.isOffline) {
       project.logger.lifecycle("libyear dependency check disabled because Gradle is in offline mode")
@@ -36,6 +38,7 @@ class LibYearPlugin : Plugin<Project> {
     }
 
     project.configurations.all { configureConfiguration(project, this) }
+    project.tasks.register<LibYearReportTask>("reportLibyears")
   }
 
   private fun configureConfiguration(project: Project, configuration: Configuration) {
@@ -66,27 +69,6 @@ class LibYearPlugin : Plugin<Project> {
     return LoggingValidator(project.logger, extension.validator.create())
   }
 
-  private fun createOracle(project: Project, extension: LibYearExtension): AgeOracle =
-    DefaultAgeOracle(
-      extension.clock.instant(),
-      HttpUrlAdapter(),
-      collectRepositoryToVersionAdapter(extension),
-      collectAllRepositories(project)
-    )
-
-  private fun collectRepositoryToVersionAdapter(extension: LibYearExtension): Map<String, VersionInfoAdapter> {
-    return defaultAdaptersByRepository() + extension.versionAdapters
-  }
-
-  private fun defaultAdaptersByRepository() = mapOf(
-    ArtifactRepositoryContainer.DEFAULT_MAVEN_CENTRAL_REPO_NAME to SolrSearchAdapter.forMavenCentral(),
-    ArtifactRepositoryContainer.DEFAULT_MAVEN_LOCAL_REPO_NAME to MavenLocalAdapter()
-  )
-
-  private fun collectAllRepositories(project: Project): Map<String, ArtifactRepository> {
-    return project.repositories.associateBy { it.name }
-  }
-
   private fun maybeReportFailure(
     logger: Logger,
     validator: DependencyValidator
@@ -110,4 +92,25 @@ class LibYearPlugin : Plugin<Project> {
       } exceeded by ${exceededBy.formatApproximate()}"
     )
   }
+}
+
+fun createOracle(project: Project, extension: LibYearExtension): AgeOracle =
+  DefaultAgeOracle(
+    extension.clock.instant(),
+    HttpUrlAdapter(),
+    collectRepositoryToVersionAdapter(extension),
+    collectAllRepositories(project)
+  )
+
+private fun collectRepositoryToVersionAdapter(extension: LibYearExtension): Map<String, VersionInfoAdapter> {
+  return defaultAdaptersByRepository() + extension.versionAdapters
+}
+
+private fun defaultAdaptersByRepository() = mapOf(
+  ArtifactRepositoryContainer.DEFAULT_MAVEN_CENTRAL_REPO_NAME to SolrSearchAdapter.forMavenCentral(),
+  ArtifactRepositoryContainer.DEFAULT_MAVEN_LOCAL_REPO_NAME to MavenLocalAdapter()
+)
+
+private fun collectAllRepositories(project: Project): Map<String, ArtifactRepository> {
+  return project.repositories.associateBy { it.name }
 }
