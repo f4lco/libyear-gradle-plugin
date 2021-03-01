@@ -1,5 +1,6 @@
 package com.libyear.traversal
 
+import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.result.ComponentResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
@@ -8,7 +9,11 @@ class DependencyTraversal private constructor(
   private val visitor: DependencyVisitor
 ) {
 
+  private val seen = mutableSetOf<ComponentIdentifier>()
+
   private fun visit(component: ComponentResult) {
+    if (!seen.add(component.id)) return
+
     visitor.visitComponentResult(component)
     if (component !is ResolvedComponentResult) return
 

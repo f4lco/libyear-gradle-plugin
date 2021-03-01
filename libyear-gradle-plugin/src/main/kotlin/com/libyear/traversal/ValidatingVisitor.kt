@@ -5,7 +5,7 @@ import com.libyear.validator.DependencyInfo
 import com.libyear.validator.DependencyValidator
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.ModuleVersionIdentifier
-import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.internal.artifacts.result.ResolvedComponentResultInternal
 import org.gradle.api.logging.Logger
 import org.slf4j.LoggerFactory
@@ -23,9 +23,9 @@ class ValidatingVisitor(
 
   override fun canContinue() = validator.isValid()
 
-  override fun visitResolvedDependencyResult(result: ResolvedDependencyResult) {
-    val module = result.selected.moduleVersion ?: return
-    val repositoryName = extractRepositoryName(result) ?: return
+  override fun visitResolvedComponentResult(component: ResolvedComponentResult) {
+    val module = component.moduleVersion ?: return
+    val repositoryName = extractRepositoryName(component) ?: return
     val age = ageOracle.get(module, repositoryName)
 
     age.onSuccess {
@@ -35,11 +35,11 @@ class ValidatingVisitor(
     }
   }
 
-  private fun extractRepositoryName(result: ResolvedDependencyResult): String? {
-    return when (val dependency = result.selected) {
-      is ResolvedComponentResultInternal -> dependency.repositoryName
-      else -> null
+  private fun extractRepositoryName(result: ResolvedComponentResult): String? {
+    if (result is ResolvedComponentResultInternal) {
+      return result.repositoryName
     }
+    return null
   }
 
   private fun handleFailure(repositoryName: String, module: ModuleVersionIdentifier, failure: Throwable) {
