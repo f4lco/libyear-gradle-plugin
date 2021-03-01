@@ -1,3 +1,6 @@
 rootProject.name = "libyear-gradle"
-include(":example")
+include(
+  ":example",
+  "example-spring-boot"
+)
 includeBuild("libyear-gradle-plugin")
