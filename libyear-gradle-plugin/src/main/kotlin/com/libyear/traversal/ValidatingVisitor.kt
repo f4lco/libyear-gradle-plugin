@@ -1,6 +1,6 @@
 package com.libyear.traversal
 
-import com.libyear.sourcing.AgeOracle
+import com.libyear.sourcing.VersionOracle
 import com.libyear.validator.DependencyInfo
 import com.libyear.validator.DependencyValidator
 import org.gradle.api.GradleException
@@ -9,6 +9,7 @@ import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.internal.artifacts.result.ResolvedComponentResultInternal
 import org.gradle.api.logging.Logger
 import org.slf4j.LoggerFactory
+import java.time.Duration
 
 data class ValidationConfig(
   val failOnError: Boolean = true
@@ -16,7 +17,7 @@ data class ValidationConfig(
 
 class ValidatingVisitor(
   logger: Logger,
-  private val ageOracle: AgeOracle,
+  private val ageOracle: VersionOracle,
   private val validator: DependencyValidator,
   private val config: ValidationConfig
 ) : DependencyVisitor(logger) {
@@ -29,7 +30,7 @@ class ValidatingVisitor(
     val age = ageOracle.get(module, repositoryName)
 
     age.onSuccess {
-      validator.add(DependencyInfo(module, it))
+      validator.add(DependencyInfo(module, it.update?.lag ?: Duration.ZERO))
     }.onFailure {
       handleFailure(repositoryName, module, it)
     }

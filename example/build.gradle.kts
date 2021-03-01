@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-  implementation("org.apache.commons:commons-text:1.9")
+  implementation("org.apache.commons:commons-text:1.8")
   implementation("org.apache.commons:commons-collections4:4.4")
 }
 

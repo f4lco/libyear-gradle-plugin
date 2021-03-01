@@ -8,7 +8,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
-import java.time.Instant
+import java.time.Duration
 
 internal class SolrSearchAdapterTest {
 
@@ -33,69 +33,193 @@ internal class SolrSearchAdapterTest {
     server.enqueue(
       MockResponse().setBody(
         """
-    {
-        "response": {
-            "docs": [
-                {
-                    "a": "commons-text",
-                    "ec": [
-                        "-javadoc.jar",
-                        "-sources.jar",
-                        "-test-sources.jar",
-                        ".jar",
-                        "-tests.jar",
-                        ".pom"
-                    ],
-                    "g": "org.apache.commons",
-                    "id": "org.apache.commons:commons-text:1.9",
-                    "p": "jar",
-                    "tags": [
-                        "text",
-                        "commons",
-                        "library",
-                        "focused",
-                        "apache",
-                        "strings",
-                        "algorithms",
-                        "working"
-                    ],
-                    "timestamp": 1595364048000,
-                    "v": "1.9"
-                }
-            ],
-            "numFound": 1,
-            "start": 0
-        },
-        "responseHeader": {
-            "QTime": 1,
-            "params": {
-                "core": "",
-                "fl": "id,g,a,v,p,ec,timestamp,tags",
-                "indent": "off",
-                "q": "g:\"org.apache.commons\" AND a:\"commons-text\" AND v:\"1.9\"",
-                "rows": "",
-                "sort": "score desc,timestamp desc,g asc,a asc,v desc",
-                "start": "",
-                "version": "2.2",
-                "wt": "json"
-            },
-            "status": 0
-        }
-    }
+      {
+          "response": {
+              "docs": [
+                  {
+                      "a": "commons-text",
+                      "ec": [
+                          "-sources.jar",
+                          "-javadoc.jar",
+                          "-test-sources.jar",
+                          "-tests.jar",
+                          ".jar",
+                          ".pom"
+                      ],
+                      "g": "org.apache.commons",
+                      "id": "org.apache.commons:commons-text",
+                      "latestVersion": "1.9",
+                      "p": "jar",
+                      "repositoryId": "central",
+                      "text": [
+                          "org.apache.commons",
+                          "commons-text",
+                          "-sources.jar",
+                          "-javadoc.jar",
+                          "-test-sources.jar",
+                          "-tests.jar",
+                          ".jar",
+                          ".pom"
+                      ],
+                      "timestamp": 1595364048000,
+                      "versionCount": 11
+                  }
+              ],
+              "numFound": 1,
+              "start": 0
+          },
+          "responseHeader": {
+              "QTime": 0,
+              "params": {
+                  "core": "",
+                  "fl": "id,g,a,latestVersion,p,ec,repositoryId,text,timestamp,versionCount",
+                  "indent": "off",
+                  "q": "g:\"org.apache.commons\" AND a:\"commons-text\"",
+                  "rows": "",
+                  "sort": "score desc,timestamp desc,g asc,a asc",
+                  "spellcheck": "true",
+                  "spellcheck.count": "5",
+                  "start": "",
+                  "version": "2.2",
+                  "wt": "json"
+              },
+              "status": 0
+          },
+          "spellcheck": {
+              "suggestions": []
+          }
+      }
         """.trimIndent()
       )
     )
 
-    val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
+    server.enqueue(
+      MockResponse().setBody(
+        """
+    {
+    "response": {
+        "docs": [
+            {
+                "a": "commons-text",
+                "ec": [
+                    "-javadoc.jar",
+                    "-sources.jar",
+                    "-test-sources.jar",
+                    ".jar",
+                    "-tests.jar",
+                    ".pom"
+                ],
+                "g": "org.apache.commons",
+                "id": "org.apache.commons:commons-text:1.8",
+                "p": "jar",
+                "tags": [
+                    "text",
+                    "commons",
+                    "library",
+                    "focused",
+                    "apache",
+                    "strings",
+                    "algorithms",
+                    "working"
+                ],
+                "timestamp": 1567195026000,
+                "v": "1.8"
+            }
+        ],
+        "numFound": 1,
+        "start": 0
+    },
+    "responseHeader": {
+        "QTime": 0,
+        "params": {
+            "core": "",
+            "fl": "id,g,a,v,p,ec,timestamp,tags",
+            "indent": "off",
+            "q": "g:\"org.apache.commons\" AND a:\"commons-text\" AND v:\"1.8\"",
+            "rows": "",
+            "sort": "score desc,timestamp desc,g asc,a asc,v desc",
+            "start": "",
+            "version": "2.2",
+            "wt": "json"
+        },
+        "status": 0
+    }
+}
+        """.trimIndent()
+      )
+    )
 
-    assertThat(created).first().isEqualTo(Instant.ofEpochMilli(1595364048000))
+    server.enqueue(
+      MockResponse().setBody(
+        """
+      {
+          "response": {
+              "docs": [
+                  {
+                      "a": "commons-text",
+                      "ec": [
+                          "-javadoc.jar",
+                          "-sources.jar",
+                          "-test-sources.jar",
+                          ".jar",
+                          "-tests.jar",
+                          ".pom"
+                      ],
+                      "g": "org.apache.commons",
+                      "id": "org.apache.commons:commons-text:1.9",
+                      "p": "jar",
+                      "tags": [
+                          "text",
+                          "commons",
+                          "library",
+                          "focused",
+                          "apache",
+                          "strings",
+                          "algorithms",
+                          "working"
+                      ],
+                      "timestamp": 1595364048000,
+                      "v": "1.9"
+                  }
+              ],
+              "numFound": 1,
+              "start": 0
+          },
+          "responseHeader": {
+              "QTime": 0,
+              "params": {
+                  "core": "",
+                  "fl": "id,g,a,v,p,ec,timestamp,tags",
+                  "indent": "off",
+                  "q": "g:\"org.apache.commons\" AND a:\"commons-text\" AND v:\"1.9\"",
+                  "rows": "",
+                  "sort": "score desc,timestamp desc,g asc,a asc,v desc",
+                  "start": "",
+                  "version": "2.2",
+                  "wt": "json"
+              },
+              "status": 0
+          }
+      }
+        """.trimIndent()
+      )
+    )
+
+    val created = adapter.get(Fixtures.apacheCommonsTextArtifact, repo)
+
+    assertThat(created).first().isEqualTo(
+      DependencyInfo(
+        Fixtures.apacheCommonsTextArtifact,
+        DependencyUpdate(nextVersion = "1.9", lag = Duration.ofMillis(28169022000))
+      )
+    )
   }
 
   @Test
   fun testTimeout() {
     // nothing enqueued
 
-    val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
+    val created = adapter.get(Fixtures.apacheCommonsTextArtifact, repo)
 
     assertThat(created).isEmpty()
   }
@@ -104,7 +228,7 @@ internal class SolrSearchAdapterTest {
   fun serverError() {
     server.enqueue(MockResponse().setResponseCode(500))
 
-    val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
+    val created = adapter.get(Fixtures.apacheCommonsTextArtifact, repo)
 
     assertThat(created).isEmpty()
   }
@@ -113,7 +237,7 @@ internal class SolrSearchAdapterTest {
   fun notFound() {
     server.enqueue(MockResponse().setResponseCode(404))
 
-    val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
+    val created = adapter.get(Fixtures.apacheCommonsTextArtifact, repo)
 
     assertThat(created).isEmpty()
   }
@@ -149,7 +273,7 @@ internal class SolrSearchAdapterTest {
       )
     )
 
-    val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
+    val created = adapter.get(Fixtures.apacheCommonsTextArtifact, repo)
 
     assertThat(created).isEmpty()
   }
@@ -158,7 +282,7 @@ internal class SolrSearchAdapterTest {
   fun emptySearchResponse() {
     server.enqueue(MockResponse().setBody(""))
 
-    val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
+    val created = adapter.get(Fixtures.apacheCommonsTextArtifact, repo)
 
     assertThat(created).isEmpty()
   }

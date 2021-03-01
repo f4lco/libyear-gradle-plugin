@@ -1,11 +1,11 @@
 package com.libyear
 
-import com.libyear.sourcing.AgeOracle
-import com.libyear.sourcing.DefaultAgeOracle
+import com.libyear.sourcing.DefaultVersionOracle
 import com.libyear.sourcing.HttpUrlAdapter
 import com.libyear.sourcing.MavenLocalAdapter
 import com.libyear.sourcing.SolrSearchAdapter
 import com.libyear.sourcing.VersionInfoAdapter
+import com.libyear.sourcing.VersionOracle
 import com.libyear.traversal.DependencyTraversal
 import com.libyear.traversal.ValidatingVisitor
 import com.libyear.traversal.ValidationConfig
@@ -94,9 +94,8 @@ class LibYearPlugin : Plugin<Project> {
   }
 }
 
-fun createOracle(project: Project, extension: LibYearExtension): AgeOracle =
-  DefaultAgeOracle(
-    extension.clock.instant(),
+fun createOracle(project: Project, extension: LibYearExtension): VersionOracle =
+  DefaultVersionOracle(
     HttpUrlAdapter(),
     collectRepositoryToVersionAdapter(extension),
     collectAllRepositories(project)

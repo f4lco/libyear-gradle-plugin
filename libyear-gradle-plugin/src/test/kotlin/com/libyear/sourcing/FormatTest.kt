@@ -30,7 +30,9 @@ internal class FormatTest {
       Sample(Duration.ofDays(5), "5 days"),
 
       Sample(Duration.ofHours(1).plusMinutes(5).plusSeconds(55), "1 hour"),
-      Sample(Duration.ofNanos(42), "1 second")
+      Sample(Duration.ofNanos(42), "1 second"),
+
+      Sample(Duration.ZERO, "0 seconds")
     )
   }
 }

@@ -82,6 +82,7 @@ dependencies {
   implementation("io.vavr:vavr:0.10.3")
   implementation("com.squareup.okhttp3:okhttp:4.8.1")
   implementation("com.fasterxml.jackson.core:jackson-databind:2.9.9")
+  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.9")
 
   testImplementation("com.squareup.okhttp3:mockwebserver:4.8.1")
   testImplementation("org.mockito:mockito-core:3.7.7")

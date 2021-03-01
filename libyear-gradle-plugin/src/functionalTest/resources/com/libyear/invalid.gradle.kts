@@ -8,12 +8,11 @@ repositories {
 }
 
 dependencies {
-  implementation("org.apache.commons:commons-text:1.9")
+  implementation("org.apache.commons:commons-text:1.8")
   implementation("org.apache.commons:commons-collections4:4.4")
 }
 
 libyear {
-  clock = fixedClock(2020, 12, 11)
   failOnError = true
-  validator = singleArtifactMustNotBeOlderThan(1.years)
+  validator = singleArtifactMustNotBeOlderThan(2.months)
 }

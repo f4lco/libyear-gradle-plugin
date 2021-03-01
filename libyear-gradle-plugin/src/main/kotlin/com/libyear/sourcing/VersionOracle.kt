@@ -2,11 +2,10 @@ package com.libyear.sourcing
 
 import io.vavr.control.Try
 import org.gradle.api.artifacts.ModuleVersionIdentifier
-import java.time.Duration
 
-interface AgeOracle {
+interface VersionOracle {
   fun get(
     module: ModuleVersionIdentifier,
     repositoryName: String
-  ): Try<Duration>
+  ): Try<DependencyInfo>
 }

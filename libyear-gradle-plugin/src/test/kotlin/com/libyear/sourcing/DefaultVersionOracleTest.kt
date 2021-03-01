@@ -5,14 +5,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.junit.jupiter.api.Test
-import java.time.Instant
 
-class DefaultAgeOracleTest {
+class DefaultVersionOracleTest {
 
   @Test
   fun testEmpty() {
-    val oracle = DefaultAgeOracle(
-      now = Instant.now(),
+    val oracle = DefaultVersionOracle(
       defaultAdapter = DummyAdapter,
       adapters = mapOf(),
       repositories = listOf(Fixtures.stubRepository).associateBy { it.name }
@@ -24,7 +22,7 @@ class DefaultAgeOracleTest {
   }
 
   private object DummyAdapter : VersionInfoAdapter {
-    override fun getArtifactCreated(m: ModuleVersionIdentifier, repository: ArtifactRepository): Try<Instant> {
+    override fun get(m: ModuleVersionIdentifier, repository: ArtifactRepository): Try<DependencyInfo> {
       return Try.failure(UnsupportedOperationException())
     }
   }

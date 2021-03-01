@@ -4,7 +4,6 @@ import io.vavr.control.Try
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.slf4j.LoggerFactory
-import java.time.Instant
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -15,7 +14,7 @@ class MavenLocalAdapter : VersionInfoAdapter {
 
   private val once = AtomicBoolean()
 
-  override fun getArtifactCreated(m: ModuleVersionIdentifier, repository: ArtifactRepository): Try<Instant> {
+  override fun get(m: ModuleVersionIdentifier, repository: ArtifactRepository): Try<DependencyInfo> {
     if (once.compareAndSet(false, true)) {
       LOG.warn("Extracting artifact creation dates from the Maven local repository is unreliable and therefore not supported.")
     }

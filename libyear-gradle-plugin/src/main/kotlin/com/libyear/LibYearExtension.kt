@@ -20,8 +20,6 @@ open class LibYearExtension {
 
   var validator: DependencyValidatorSpec = defaultValidator
 
-  var clock: Clock = Clock.systemUTC()
-
   var configurations: List<String> = defaultConfigurations
 
   // DSL for build script authors

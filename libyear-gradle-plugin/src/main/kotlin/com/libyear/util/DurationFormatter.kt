@@ -25,7 +25,8 @@ fun Duration.formatApproximate(): String {
     }
   }
 
-  return format(1.0, ChronoUnit.SECONDS)
+  val remainder = if (isZero) 0.0 else 1.0
+  return format(remainder, ChronoUnit.SECONDS)
 }
 
 private fun format(amount: Double, unit: ChronoUnit): String {

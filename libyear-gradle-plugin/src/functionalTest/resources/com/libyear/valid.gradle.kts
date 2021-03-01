@@ -13,7 +13,6 @@ dependencies {
 }
 
 libyear {
-  clock = fixedClock(2020, 12, 11)
   failOnError = true
   validator = singleArtifactMustNotBeOlderThan(5.years)
 }

@@ -6,9 +6,12 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.gradle.api.artifacts.ModuleIdentifier
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.gradle.api.internal.artifacts.DefaultModuleVersionIdentifier
 import java.io.IOException
+import java.time.Duration
 import java.time.Instant
 
 /**
@@ -39,20 +42,43 @@ class SolrSearchAdapter(
   private val client = OkHttpClient()
   private val mapper = ObjectMapper()
 
-  override fun getArtifactCreated(m: ModuleVersionIdentifier, repository: ArtifactRepository) = Try.of {
-    val url = buildUrl(m)
-    val response = getResponseText(url)
-    response.let(::parse)
+  override fun get(m: ModuleVersionIdentifier, repository: ArtifactRepository) = Try.of {
+    val latestVersion = retrieveLatestVersion(m.module)
+    DependencyInfo(m, retrieveUpdate(m, latestVersion))
   }
 
-  private fun buildUrl(m: ModuleVersionIdentifier): HttpUrl {
+  private fun retrieveLatestVersion(m: ModuleIdentifier): String {
+    val url = buildUrlForLatestVersion(m)
+    val response = getResponseText(url)
+    return parseLatestVersion(response)
+  }
+
+  private fun buildUrlForLatestVersion(m: ModuleIdentifier): HttpUrl {
+    val query =
+      """g:"${m.group}" AND a:"${m.name}""""
     return repoUrl.toHttpUrl().newBuilder()
-      .setQueryParameter("q", encodeToQueryParameter(m))
+      .setQueryParameter("q", query)
       .build()
   }
 
-  private fun encodeToQueryParameter(m: ModuleVersionIdentifier): String {
-    return """g:"${m.group}" AND a:"${m.name}" AND v:"${m.version}""""
+  private fun parseLatestVersion(response: String): String {
+    val json = mapper.readTree(response) ?: throw IllegalArgumentException("Invalid JSON: $response")
+    val doc = json["response"].withArray("docs").first()
+    return doc["latestVersion"].asText()
+  }
+
+  private fun retrieveCreated(m: ModuleVersionIdentifier): Instant {
+    val url = buildUrlForArtifact(m)
+    val response = getResponseText(url)
+    return parseCreated(response)
+  }
+
+  private fun buildUrlForArtifact(m: ModuleVersionIdentifier): HttpUrl {
+    val query =
+      """g:"${m.group}" AND a:"${m.name}" AND v:"${m.version}""""
+    return repoUrl.toHttpUrl().newBuilder()
+      .setQueryParameter("q", query)
+      .build()
   }
 
   private fun getResponseText(url: HttpUrl): String {
@@ -67,14 +93,24 @@ class SolrSearchAdapter(
     }
   }
 
-  private fun parse(response: String): Instant {
+  private fun parseCreated(response: String): Instant {
     val json = mapper.readTree(response) ?: throw IllegalArgumentException("Invalid JSON: $response")
-    val docs = json["response"].withArray("docs")
-    if (docs.size() >= 1) {
-      val created = docs[0]["timestamp"].asLong()
-      return Instant.ofEpochMilli(created)
-    }
-    throw IllegalArgumentException("List of result documents is empty in: $response")
+    val doc = json["response"].withArray("docs").first()
+    return doc["timestamp"].asLong().let(Instant::ofEpochMilli)
+  }
+
+  internal fun retrieveUpdate(m: ModuleVersionIdentifier, latestVersion: String): DependencyUpdate? {
+    if (m.version == latestVersion) return null
+    val currentCreated = retrieveCreated(m)
+    val latestCreated = retrieveCreated(DefaultModuleVersionIdentifier.newId(m.module, latestVersion))
+
+    // TODO Figure this one out.
+    // Apache Tomcat is concurrently maintaining two release series: 9.x and 10.x.
+    // Therefore, the latest and greatest is 10.x.
+    // However, 10.x is released 1h before 9.x, that makes the latest release older than the 9.x patch release.
+    // How should we handle this?
+    val lag = Duration.between(currentCreated, latestCreated)
+    return if (lag.isNegative) null else DependencyUpdate(latestVersion, lag)
   }
 
   companion object {

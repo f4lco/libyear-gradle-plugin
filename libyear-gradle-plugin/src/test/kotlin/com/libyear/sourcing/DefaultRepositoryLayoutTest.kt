@@ -12,6 +12,6 @@ internal class DefaultRepositoryLayoutTest {
 
     val url = DefaultRepositoryLayout.getArtifactUrl(baseUrl, Fixtures.apacheCommonsTextArtifact)
 
-    assertThat(url).isEqualTo("https://repo.example.org/org/apache/commons/commons-text/1.9/commons-text-1.9.jar".toHttpUrl())
+    assertThat(url).isEqualTo("https://repo.example.org/org/apache/commons/commons-text/1.8/commons-text-1.8.jar".toHttpUrl())
   }
 }

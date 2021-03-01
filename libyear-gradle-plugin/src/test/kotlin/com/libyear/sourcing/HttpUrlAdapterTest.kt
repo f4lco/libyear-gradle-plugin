@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
+import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -36,19 +37,53 @@ internal class HttpUrlAdapterTest {
 
   @Test
   fun testOnline() {
-    val headers = Headers.headersOf().newBuilder().add("Last-Modified", now).build()
-    server.enqueue(MockResponse().setHeaders(headers))
+    server.enqueue(
+      MockResponse().setBody(
+        """
+      <metadata>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <versioning>
+      <latest>1.9</latest>
+      <release>1.9</release>
+      <versions>
+      <version>1.0-beta-1</version>
+      <version>1.0</version>
+      <version>1.1</version>
+      <version>1.2</version>
+      <version>1.3</version>
+      <version>1.4</version>
+      <version>1.5</version>
+      <version>1.6</version>
+      <version>1.7</version>
+      <version>1.8</version>
+      <version>1.9</version>
+      </versions>
+      <lastUpdated>20200724213155</lastUpdated>
+      </versioning>
+      </metadata>
+        """.trimIndent()
+      )
+    )
 
-    val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
+    val headersCurrent = Headers.headersOf().newBuilder().add("Last-Modified", now.minus(5, ChronoUnit.HOURS)).build()
+    server.enqueue(MockResponse().setHeaders(headersCurrent))
 
-    assertThat(created).first().isEqualTo(now.truncatedTo(ChronoUnit.SECONDS))
+    val headersLatest = Headers.headersOf().newBuilder().add("Last-Modified", now).build()
+    server.enqueue(MockResponse().setHeaders(headersLatest))
+
+    val created = adapter.get(Fixtures.apacheCommonsTextArtifact, repo)
+
+    assertThat(created).first().isEqualTo(
+      DependencyInfo(Fixtures.apacheCommonsTextArtifact, DependencyUpdate(nextVersion = "1.9", lag = Duration.ofHours(5)))
+    )
   }
 
   @Test
   fun testTimeout() {
     // nothing enqueued
 
-    val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
+    val created = adapter.get(Fixtures.apacheCommonsTextArtifact, repo)
 
     assertThat(created).isEmpty()
   }
@@ -57,7 +92,7 @@ internal class HttpUrlAdapterTest {
   fun serverError() {
     server.enqueue(MockResponse().setResponseCode(500))
 
-    val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
+    val created = adapter.get(Fixtures.apacheCommonsTextArtifact, repo)
 
     assertThat(created).isEmpty()
   }
@@ -66,7 +101,7 @@ internal class HttpUrlAdapterTest {
   fun notFound() {
     server.enqueue(MockResponse().setResponseCode(404))
 
-    val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
+    val created = adapter.get(Fixtures.apacheCommonsTextArtifact, repo)
 
     assertThat(created).isEmpty()
   }
@@ -75,7 +110,7 @@ internal class HttpUrlAdapterTest {
   fun headerNotPresent() {
     server.enqueue(MockResponse())
 
-    val created = adapter.getArtifactCreated(Fixtures.apacheCommonsTextArtifact, repo)
+    val created = adapter.get(Fixtures.apacheCommonsTextArtifact, repo)
 
     assertThat(created).isEmpty()
   }
