@@ -8,6 +8,7 @@ dependencies {
 }
 
 libyear {
-  failOnError = true
+  // in CI, this may fail with 429 Too many requests
+  failOnError = false
   validator = allArtifactsCombinedMustNotBeOlderThan(100.years)
 }

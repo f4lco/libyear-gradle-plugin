@@ -4,7 +4,8 @@ plugins {
 }
 
 libyear {
+  // in CI, this may fail with 429 Too many requests
+  failOnError = false
   configurations = ['compileClasspath']
-  failOnError = true
   validator = allArtifactsCombinedMustNotBeOlderThan(days(5))
 }
