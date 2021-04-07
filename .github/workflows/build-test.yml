@@ -5,6 +5,11 @@ on: push
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        gradle: ["6.8.3", "7.0-rc-2"]
+    env:
+      GRADLE_VERSION: ${{ matrix.gradle }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -15,8 +20,8 @@ jobs:
         with:
           java-version: 11
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Set up Gradle Wrapper
+        run: ./gradlew wrapper --gradle-version $GRADLE_VERSION
 
       - name: Build with Gradle
         run: ./gradlew --stacktrace check
