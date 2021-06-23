@@ -19,7 +19,9 @@ import org.gradle.api.artifacts.ArtifactRepositoryContainer
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.gradle.api.initialization.resolve.RepositoriesMode
 import org.gradle.api.logging.Logger
+import org.gradle.invocation.DefaultGradle
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import java.time.Duration
@@ -111,5 +113,12 @@ private fun defaultAdaptersByRepository() = mapOf(
 )
 
 private fun collectAllRepositories(project: Project): Map<String, ArtifactRepository> {
-  return project.repositories.associateBy { it.name }
+  val resolutionManagement = (project.gradle as DefaultGradle).settings.dependencyResolutionManagement
+
+  val repositories = when (resolutionManagement.repositoriesMode.get()) {
+    RepositoriesMode.PREFER_PROJECT -> project.repositories.ifEmpty { resolutionManagement.repositories }
+    RepositoriesMode.PREFER_SETTINGS, RepositoriesMode.FAIL_ON_PROJECT_REPOS -> resolutionManagement.repositories
+  }
+
+  return repositories.associateBy { it.name }
 }

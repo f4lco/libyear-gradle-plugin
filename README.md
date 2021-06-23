@@ -80,6 +80,12 @@ BUILD SUCCESSFUL in 29s
 1 actionable task: 1 executed
 ```
 
+## Changelog
+
+### 0.1.3
+
+The plugin now also considers repositories defined in the settings script (`settings.gradle` or `settings.gradle.kts`) in addition to the project's repositories depending on the [repositories mode][repo-mode]. Previously, the plugin processed only the project's repositories.
+
 ## Acknowledgements
 
 J. Cox, E. Bouwers, M. van Eekelen and J. Visser, [Measuring Dependency
@@ -91,3 +97,5 @@ Conference on Software Engineering (ICSE 2015), May 2015
 [1]: https://ericbouwers.github.io/papers/icse15.pdf
 
 [libyear]: https://libyear.com/
+
+[repo-mode]: https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:centralized-repository-declaration
