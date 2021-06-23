@@ -17,7 +17,7 @@ Update your Gradle build instructions with the following plugin application, whi
 ```kotlin
 // in Kotlin / build.gradle.kts:
 plugins {
-  id("com.libyear.libyear-gradle-plugin")
+  id("com.libyear.libyear-gradle-plugin").version("<version>")
 }
 
 libyear {
@@ -38,7 +38,7 @@ libyear {
 ```groovy
 // in Groovy / build.gradle:
 plugins {
-  id 'com.libyear.libyear-gradle-plugin'
+  id 'com.libyear.libyear-gradle-plugin' version "<version>"
 }
 
 libyear {
