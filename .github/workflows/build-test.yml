@@ -27,14 +27,14 @@ jobs:
         run: ./gradlew --stacktrace check
 
       - name: Release next version
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && matrix.gradle == '6.8.3'
         run: ./gradlew :libyear-gradle-plugin:release -Prelease.customUsername="${USER}" -Prelease.customPassword="${PW}"
         env:
           USER: ${{ github.actor }}
           PW: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Gradle Plugin Portal
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && matrix.gradle == '6.8.3'
         run: ./gradlew :libyear-gradle-plugin:publishPlugins -Pgradle.publish.key="${KEY}" -Pgradle.publish.secret="${SECRET}"
         env:
           KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
