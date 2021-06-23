@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        gradle: ["6.9", "7.0-rc-2"]
+        gradle: ["6.9", "7.1"]
     env:
       GRADLE_VERSION: ${{ matrix.gradle }}
     steps:
