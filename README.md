@@ -86,6 +86,8 @@ BUILD SUCCESSFUL in 29s
 
 The plugin now also considers repositories defined in the settings script (`settings.gradle` or `settings.gradle.kts`) in addition to the project's repositories depending on the [repositories mode][repo-mode]. Previously, the plugin processed only the project's repositories.
 
+The build also runs against Gradle 7 in addition to Gradle 6.x to prevent regressions.
+
 ## Acknowledgements
 
 J. Cox, E. Bouwers, M. van Eekelen and J. Visser, [Measuring Dependency
