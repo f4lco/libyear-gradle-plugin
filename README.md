@@ -82,6 +82,10 @@ BUILD SUCCESSFUL in 29s
 
 ## Changelog
 
+### 0.1.4
+
+The violators report now excludes up-to-date dependencies which contribute zero seconds to the accumulated libyears.
+
 ### 0.1.3
 
 The plugin now also considers repositories defined in the settings script (`settings.gradle` or `settings.gradle.kts`) in addition to the project's repositories depending on the [repositories mode][repo-mode]. Previously, the plugin processed only the project's repositories.

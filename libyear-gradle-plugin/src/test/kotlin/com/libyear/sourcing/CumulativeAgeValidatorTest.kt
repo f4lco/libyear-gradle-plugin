@@ -45,6 +45,21 @@ internal class CumulativeAgeValidatorTest {
   }
 
   @Test
+  fun upToDateArtifactsAreNotViolators() {
+    val validator = CumulativeAgeValidatorSpec(maxAge = Duration.ofSeconds(1)).create()
+
+    validator.add(DependencyInfo(Fixtures.apacheCommonsTextArtifact, Duration.ZERO))
+    validator.add(DependencyInfo(Fixtures.apacheCommonsCollectionsArtifact, Duration.ofSeconds(42)))
+
+    assertThat(validator.violators())
+      .isEqualTo(
+        listOf(
+          DependencyInfo(Fixtures.apacheCommonsCollectionsArtifact, Duration.ofSeconds(42))
+        )
+      )
+  }
+
+  @Test
   fun threshold() {
     val validator = CumulativeAgeValidatorSpec(maxAge = Duration.ofSeconds(1)).create()
 

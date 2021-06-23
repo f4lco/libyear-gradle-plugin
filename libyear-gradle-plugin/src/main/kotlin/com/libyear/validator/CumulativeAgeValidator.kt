@@ -16,7 +16,9 @@ class CumulativeAgeValidator(val spec: CumulativeAgeValidatorSpec) : DependencyV
   fun cumulativeAge(): Duration = collected.map { it.age }.fold(Duration.ZERO, Duration::plus)
 
   override fun add(dep: DependencyInfo) {
-    collected.add(dep)
+    if (dep.age > Duration.ZERO) {
+      collected.add(dep)
+    }
   }
 
   override fun isValid() = cumulativeAge() <= spec.maxAge
