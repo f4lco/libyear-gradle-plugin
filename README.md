@@ -82,7 +82,7 @@ BUILD SUCCESSFUL in 29s
 
 ## Changelog
 
-### 0.1.4 (unreleased)
+### 0.1.4 (2021-06-24)
 
 The violators report now excludes up-to-date dependencies which contribute zero seconds to the accumulated libyears.
 
