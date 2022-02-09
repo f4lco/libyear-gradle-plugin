@@ -82,6 +82,10 @@ BUILD SUCCESSFUL in 29s
 
 ## Changelog
 
+### 0.1.6 (2022-02-09)
+
+This release uses Gradle 6.9.2 as baseline for running the test suite and the plugin deployment.
+
 ### 0.1.5 (2022-02-09)
 
 This release uses Gradle 6.9.1 as baseline for running the test suite and the plugin deployment.
