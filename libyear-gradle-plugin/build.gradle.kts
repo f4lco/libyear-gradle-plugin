@@ -113,7 +113,9 @@ val functionalTestTask = tasks.register<Test>("functionalTest") {
 }
 
 tasks.withType<ValidatePlugins> {
-  enableStricterValidation.set(true)
+  // FIXME Cannot add `@DisableCachingByDefault` because of Gradle 6.9 backwards compatibility
+  //   After dropping support for Gradle 6.9, fix violations and enforce strict mode.
+  enableStricterValidation.set(false)
 }
 
 tasks.check {
