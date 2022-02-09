@@ -82,6 +82,10 @@ BUILD SUCCESSFUL in 29s
 
 ## Changelog
 
+### 0.1.7 (unreleased)
+
+The build of this release tests against the latest Gradle 7.x release.
+
 ### 0.1.6 (2022-02-09)
 
 This release uses Gradle 6.9.2 as baseline for running the test suite and the plugin deployment.
