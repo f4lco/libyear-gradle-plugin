@@ -112,6 +112,10 @@ val functionalTestTask = tasks.register<Test>("functionalTest") {
   mustRunAfter(tasks.test)
 }
 
+tasks.withType<ValidatePlugins> {
+  enableStricterValidation.set(true)
+}
+
 tasks.check {
   dependsOn(functionalTestTask)
 }
