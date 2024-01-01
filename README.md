@@ -61,22 +61,42 @@ If you build on a modern framework such as Spring Boot, you invite about 10 liby
 
 ```
 > Task :example-spring-boot:reportLibyears
-Collected 9.5 years  worth of libyears from 13 dependencies:
- -> 2.6 years  from ch.qos.logback:logback-core (1.2.3 => 1.3.0-alpha5)
- -> 2.6 years  from ch.qos.logback:logback-classic (1.2.3 => 1.3.0-alpha5)
- -> 1.3 years  from org.glassfish:jakarta.el (3.0.3 => 4.0.1)
- -> 1.2 years  from jakarta.annotation:jakarta.annotation-api (1.3.5 => 2.0.0)
- -> 5.9 months from org.apache.logging.log4j:log4j-api (2.13.3 => 2.14.0)
- -> 5.9 months from org.apache.logging.log4j:log4j-to-slf4j (2.13.3 => 2.14.0)
- -> 5.4 months from org.yaml:snakeyaml (1.27 => 1.28)
- -> 28 days    from com.fasterxml.jackson.core:jackson-annotations (2.11.4 => 2.12.1)
- -> 28 days    from com.fasterxml.jackson.core:jackson-core (2.11.4 => 2.12.1)
- -> 28 days    from com.fasterxml.jackson.datatype:jackson-datatype-jsr310 (2.11.4 => 2.12.1)
- -> 28 days    from com.fasterxml.jackson.datatype:jackson-datatype-jdk8 (2.11.4 => 2.12.1)
- -> 28 days    from com.fasterxml.jackson.module:jackson-module-parameter-names (2.11.4 => 2.12.1)
- -> 28 days    from com.fasterxml.jackson.core:jackson-databind (2.11.4 => 2.12.1)
+Collected 2.3 decades  worth of libyears from 33 dependencies:
+ -> 4.2 years  from jakarta.annotation:jakarta.annotation-api (1.3.5 => 3.0.0-M1)
+ -> 1.9 years  from org.slf4j:jul-to-slf4j (1.7.36 => 2.1.0-alpha0)
+ -> 1.9 years  from org.slf4j:slf4j-api (1.7.36 => 2.1.0-alpha0)
+ -> 1.8 years  from org.apache.logging.log4j:log4j-api (2.17.2 => 3.0.0-beta1)
+ -> 1.8 years  from org.apache.logging.log4j:log4j-to-slf4j (2.17.2 => 3.0.0-beta1)
+ -> 1.7 years  from org.yaml:snakeyaml (1.30 => 2.2)
+ -> 11 months  from com.fasterxml.jackson.module:jackson-module-parameter-names (2.13.5 => 2.16.1)
+ -> 11 months  from com.fasterxml.jackson.datatype:jackson-datatype-jdk8 (2.13.5 => 2.16.1)
+ -> 11 months  from com.fasterxml.jackson.datatype:jackson-datatype-jsr310 (2.13.5 => 2.16.1)
+ -> 11 months  from com.fasterxml.jackson.core:jackson-annotations (2.13.5 => 2.16.1)
+ -> 11 months  from com.fasterxml.jackson:jackson-bom (2.13.5 => 2.16.1)
+ -> 11 months  from com.fasterxml.jackson.core:jackson-core (2.13.5 => 2.16.1)
+ -> 11 months  from com.fasterxml.jackson.core:jackson-databind (2.13.5 => 2.16.1)
+ -> 8.3 months from ch.qos.logback:logback-core (1.2.12 => 1.4.14)
+ -> 8.3 months from ch.qos.logback:logback-classic (1.2.12 => 1.4.14)
+ -> 28.2 days  from org.springframework.boot:spring-boot-starter-tomcat (2.7.18 => 3.2.1)
+ -> 28.2 days  from org.springframework.boot:spring-boot-starter-web (2.7.18 => 3.2.1)
+ -> 28.2 days  from org.springframework.boot:spring-boot (2.7.18 => 3.2.1)
+ -> 28.2 days  from org.springframework.boot:spring-boot-starter (2.7.18 => 3.2.1)
+ -> 28.2 days  from org.springframework.boot:spring-boot-starter-json (2.7.18 => 3.2.1)
+ -> 28.2 days  from org.springframework.boot:spring-boot-starter-logging (2.7.18 => 3.2.1)
+ -> 28.2 days  from org.springframework.boot:spring-boot-autoconfigure (2.7.18 => 3.2.1)
+ -> 28.1 days  from org.springframework:spring-aop (5.3.31 => 6.1.2)
+ -> 28.1 days  from org.springframework:spring-context (5.3.31 => 6.1.2)
+ -> 28.1 days  from org.springframework:spring-core (5.3.31 => 6.1.2)
+ -> 28.1 days  from org.springframework:spring-expression (5.3.31 => 6.1.2)
+ -> 28.1 days  from org.springframework:spring-web (5.3.31 => 6.1.2)
+ -> 28.1 days  from org.springframework:spring-webmvc (5.3.31 => 6.1.2)
+ -> 28.1 days  from org.springframework:spring-jcl (5.3.31 => 6.1.2)
+ -> 28.1 days  from org.springframework:spring-beans (5.3.31 => 6.1.2)
+ -> 27.7 days  from org.apache.tomcat.embed:tomcat-embed-websocket (9.0.83 => 11.0.0-M15)
+ -> 27.7 days  from org.apache.tomcat.embed:tomcat-embed-el (9.0.83 => 11.0.0-M15)
+ -> 27.7 days  from org.apache.tomcat.embed:tomcat-embed-core (9.0.83 => 11.0.0-M15)
 
-BUILD SUCCESSFUL in 29s
+BUILD SUCCESSFUL in 28s
 1 actionable task: 1 executed
 ```
 
