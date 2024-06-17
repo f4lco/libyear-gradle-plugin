@@ -102,6 +102,10 @@ BUILD SUCCESSFUL in 28s
 
 ## Changelog
 
+### 0.1.8 (2024-06-17)
+
+The build of this release tests against the latest Gradle 7.x and 8.x release.
+
 ### 0.1.7 (2024-01-01)
 
 The build of this release tests against the latest Gradle 7.x release.
