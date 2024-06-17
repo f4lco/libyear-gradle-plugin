@@ -7,9 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        gradle: ["6.9.4", "7.6.3"]
-    env:
-      GRADLE_VERSION: ${{ matrix.gradle }}
+        gradle: ["6.9.4", "7.6.4", "8.8"]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -20,22 +18,24 @@ jobs:
         with:
           java-version: 11
 
-      - name: Set up Gradle Wrapper
-        run: ./gradlew wrapper --gradle-version $GRADLE_VERSION
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: ${{ matrix.gradle }}
 
       - name: Build with Gradle
-        run: ./gradlew --stacktrace check
+        run: gradle --stacktrace check
 
       - name: Release next version
         if: github.ref == 'refs/heads/main' && matrix.gradle == '6.9.4'
-        run: ./gradlew :libyear-gradle-plugin:release -Prelease.customUsername="${USER}" -Prelease.customPassword="${PW}"
+        run: gradle :libyear-gradle-plugin:release -Prelease.customUsername="${USER}" -Prelease.customPassword="${PW}"
         env:
           USER: ${{ github.actor }}
           PW: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Gradle Plugin Portal
         if: github.ref == 'refs/heads/main' && matrix.gradle == '6.9.4'
-        run: ./gradlew :libyear-gradle-plugin:publishPlugins -Pgradle.publish.key="${KEY}" -Pgradle.publish.secret="${SECRET}"
+        run: gradle :libyear-gradle-plugin:publishPlugins -Pgradle.publish.key="${KEY}" -Pgradle.publish.secret="${SECRET}"
         env:
           KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
           SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
