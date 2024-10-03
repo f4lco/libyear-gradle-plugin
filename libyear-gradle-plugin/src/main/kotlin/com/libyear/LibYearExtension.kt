@@ -20,7 +20,7 @@ open class LibYearExtension {
 
   var validator: DependencyValidatorSpec = defaultValidator
 
-  var ignoreTransitive: Boolean = false
+  var maxTransitiveDepth: Int = 100
 
   var configurations: List<String> = defaultConfigurations
 

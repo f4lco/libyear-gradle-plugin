@@ -7,12 +7,12 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 
 class DependencyTraversal private constructor(
   private val visitor: DependencyVisitor,
-  private val ignoreTransitive: Boolean
+  private val maxTransitiveDepth: Int
 ) {
 
   private val seen = mutableSetOf<ComponentIdentifier>()
 
-  private fun visit(component: ComponentResult, isRoot: Boolean = false) {
+  private fun visit(component: ComponentResult, level: Int = 0) {
     if (!seen.add(component.id)) return
 
     visitor.visitComponentResult(component)
@@ -24,7 +24,7 @@ class DependencyTraversal private constructor(
       if (!visitor.canContinue()) return
 
       if (dependency is ResolvedDependencyResult) {
-        if (ignoreTransitive && !isRoot) {
+        if (level > maxTransitiveDepth) {
           continue
         }
         nextComponents.add(dependency.selected)
@@ -32,7 +32,7 @@ class DependencyTraversal private constructor(
     }
 
     for (nextComponent in nextComponents) {
-      visit(nextComponent)
+      visit(nextComponent, level + 1)
       if (!visitor.canContinue()) break
     }
   }
@@ -42,7 +42,7 @@ class DependencyTraversal private constructor(
     fun visit(
       root: ResolvedComponentResult,
       visitor: DependencyVisitor,
-      ignoreTransitive: Boolean = false
-    ): Unit = DependencyTraversal(visitor, ignoreTransitive).visit(root, isRoot = true)
+      maxTransitiveDepth: Int = 0
+    ): Unit = DependencyTraversal(visitor, maxTransitiveDepth).visit(root, level = 0)
   }
 }
