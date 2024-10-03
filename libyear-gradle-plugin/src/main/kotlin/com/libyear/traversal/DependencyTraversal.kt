@@ -4,17 +4,15 @@ import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.result.ComponentResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
-import org.gradle.api.logging.Logger
 
 class DependencyTraversal private constructor(
-  private val logger: Logger,
   private val visitor: DependencyVisitor,
   private val ignoreTransitive: Boolean // Step 1: Add flag
 ) {
 
   private val seen = mutableSetOf<ComponentIdentifier>()
 
-  private fun visit(component: ComponentResult) {
+  private fun visit(component: ComponentResult, isRoot: Boolean = false) {
     if (!seen.add(component.id)) return
 
     visitor.visitComponentResult(component)
@@ -26,8 +24,7 @@ class DependencyTraversal private constructor(
       if (!visitor.canContinue()) return
 
       if (dependency is ResolvedDependencyResult) {
-        if (ignoreTransitive) {
-          logger.lifecycle("Ignoring transitive dependency: ${dependency.selected.id}")
+        if (ignoreTransitive && !isRoot) {
           continue
         }
         nextComponents.add(dependency.selected)
@@ -43,10 +40,9 @@ class DependencyTraversal private constructor(
   companion object {
 
     fun visit(
-      logger: Logger,
       root: ResolvedComponentResult,
       visitor: DependencyVisitor,
       ignoreTransitive: Boolean = false
-    ): Unit = DependencyTraversal(logger, visitor, ignoreTransitive).visit(root)
+    ): Unit = DependencyTraversal(visitor, ignoreTransitive).visit(root, isRoot = true)
   }
 }
