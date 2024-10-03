@@ -7,7 +7,8 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 
 class DependencyTraversal private constructor(
   private val visitor: DependencyVisitor,
-  private val maxTransitiveDepth: Int?
+  private val maxTransitiveDepth: Int?,
+  private val excludedPackages: Set<String>
 ) {
 
   private val seen = mutableSetOf<ComponentIdentifier>()
@@ -27,7 +28,13 @@ class DependencyTraversal private constructor(
         if (maxTransitiveDepth != null && depth > maxTransitiveDepth) {
           continue
         }
+
+        if (excludedPackages.any { selected.moduleVersion.toString().contains(it, ignoreCase = true) }) {
+          continue
+        }
+        
         nextComponents.add(dependency.selected)
+
       }
     }
 
@@ -42,7 +49,8 @@ class DependencyTraversal private constructor(
     fun visit(
       root: ResolvedComponentResult,
       visitor: DependencyVisitor,
-      maxTransitiveDepth: Int? = null
-    ): Unit = DependencyTraversal(visitor, maxTransitiveDepth).visit(root, depth = 0)
+      maxTransitiveDepth: Int? = null,
+      excludedPackages: Set<String> = setOf()
+    ): Unit = DependencyTraversal(visitor, maxTransitiveDepth, excludedPackages).visit(root, depth = 0)
   }
 }
