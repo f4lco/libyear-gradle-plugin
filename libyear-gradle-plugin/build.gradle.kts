@@ -8,8 +8,6 @@ plugins {
   id("com.gradle.plugin-publish").version("0.21.0")
   id("org.jlleitschuh.gradle.ktlint").version("10.0.0")
   id("pl.allegro.tech.build.axion-release").version("1.10.3")
-  id("org.jetbrains.kotlin.jvm") version "1.8.0"
-  id("maven-publish")
 }
 
 scmVersion {
@@ -28,7 +26,7 @@ scmVersion {
 }
 
 group = "com.libyear"
-version = "1.0.0-LOCAL"
+version = scmVersion.version
 
 val functionalTest by sourceSets.creating
 
@@ -118,18 +116,4 @@ tasks.withType<ValidatePlugins> {
 
 tasks.check {
   dependsOn(functionalTestTask)
-}
-
-publishing {
-  publications {
-    create<MavenPublication>("mavenJava") {
-      from(components["java"])
-      groupId = "com.libyear"
-      artifactId = "libyear-gradle-plugin"
-      version = "1.0.0-LOCAL"
-    }
-  }
-  repositories {
-    mavenLocal()
-  }
 }

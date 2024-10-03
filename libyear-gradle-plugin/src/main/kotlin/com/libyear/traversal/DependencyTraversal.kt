@@ -7,7 +7,7 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 
 class DependencyTraversal private constructor(
   private val visitor: DependencyVisitor,
-  private val ignoreTransitive: Boolean // Step 1: Add flag
+  private val ignoreTransitive: Boolean
 ) {
 
   private val seen = mutableSetOf<ComponentIdentifier>()

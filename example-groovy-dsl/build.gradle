@@ -1,0 +1,11 @@
+plugins {
+  id 'com.libyear.libyear-gradle-plugin'
+  id 'java'
+}
+
+libyear {
+  // in CI, this may fail with 429 Too many requests
+  failOnError = false
+  configurations = ['compileClasspath']
+  validator = allArtifactsCombinedMustNotBeOlderThan(days(5))
+}
