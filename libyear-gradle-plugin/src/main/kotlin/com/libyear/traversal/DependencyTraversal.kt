@@ -12,7 +12,7 @@ class DependencyTraversal private constructor(
 
   private val seen = mutableSetOf<ComponentIdentifier>()
 
-  private fun visit(component: ComponentResult, level: Int = 0) {
+  private fun visit(component: ComponentResult, depth: Int = 0) {
     if (!seen.add(component.id)) return
 
     visitor.visitComponentResult(component)
@@ -24,7 +24,7 @@ class DependencyTraversal private constructor(
       if (!visitor.canContinue()) return
 
       if (dependency is ResolvedDependencyResult) {
-        if (level > maxTransitiveDepth) {
+        if (depth > maxTransitiveDepth) {
           continue
         }
         nextComponents.add(dependency.selected)
@@ -32,7 +32,7 @@ class DependencyTraversal private constructor(
     }
 
     for (nextComponent in nextComponents) {
-      visit(nextComponent, level + 1)
+      visit(nextComponent, depth + 1)
       if (!visitor.canContinue()) break
     }
   }
@@ -43,6 +43,6 @@ class DependencyTraversal private constructor(
       root: ResolvedComponentResult,
       visitor: DependencyVisitor,
       maxTransitiveDepth: Int = 0
-    ): Unit = DependencyTraversal(visitor, maxTransitiveDepth).visit(root, level = 0)
+    ): Unit = DependencyTraversal(visitor, maxTransitiveDepth).visit(root, depth = 0)
   }
 }
