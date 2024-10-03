@@ -20,6 +20,8 @@ open class LibYearExtension {
 
   var validator: DependencyValidatorSpec = defaultValidator
 
+  var ignoreTransitive: Boolean = false
+
   var configurations: List<String> = defaultConfigurations
 
   // DSL for build script authors
