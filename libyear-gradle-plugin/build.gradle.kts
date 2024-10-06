@@ -98,6 +98,7 @@ tasks.withType(Test::class) {
   testLogging {
     events("started")
     showExceptions = true
+    showStandardStreams = true
   }
 }
 
