@@ -36,9 +36,23 @@ internal class LibYearPluginTest {
       .extracting { it?.outcome }.isEqualTo(TaskOutcome.FAILED)
   }
 
-  private fun withGradleRunner() = GradleRunner.create().apply {
+  @Test
+  fun testExcludedPackages() {
+    setUpProject("excludedPackages.gradle.kts")
+
+    val result = withGradleRunner("reportLibyears").build()
+    val output = result.output
+
+    assertThat(output)
+      .contains("from 3 dependencies")
+      .contains("org.apache.commons:commons-text")
+      .contains("org.apache.commons:commons-collections")
+    assertThat(output).doesNotContain("unknown.package")
+  }
+
+  private fun withGradleRunner(command: String = "dependencies") = GradleRunner.create().apply {
     withProjectDir(project.toFile())
-    withArguments("dependencies")
+    withArguments(command)
     withPluginClasspath()
   }
 
