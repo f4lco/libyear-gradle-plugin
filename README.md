@@ -32,6 +32,9 @@ libyear {
   
   // alternatively:
   validator = singleArtifactMustNotBeOlderThan(2.days)
+
+  // optional: limit the depth of the dependency traversal, default is 0 = only the root level, null = no limit
+  maxTransitiveDepth = 5
 }
 ```
 
@@ -45,6 +48,7 @@ libyear {
   configurations = ['compileClasspath']
   failOnError = true
   validator = allArtifactsCombinedMustNotBeOlderThan(days(5))
+  maxTransitiveDepth = 5
 }
 ```
 
@@ -101,6 +105,14 @@ BUILD SUCCESSFUL in 28s
 ```
 
 ## Changelog
+
+### 0.2.0 (2024-10-16)
+
+@Breefield added the `maxTransitiveDepth` toggle to put an upper bound to the depth of dependency traversal.  
+Starting with 0.2.0, because the application owners have most control over direct dependencies (depth = 0),
+the plugin only reports the Libyears of direct dependencies by default.  
+The full Libyear report is available with unlimited depth (`maxTransitiveDepth = null`), but will take the
+most time and resources to complete.
 
 ### 0.1.8 (2024-06-17)
 
