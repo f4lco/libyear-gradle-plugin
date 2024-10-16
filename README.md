@@ -32,6 +32,9 @@ libyear {
   
   // alternatively:
   validator = singleArtifactMustNotBeOlderThan(2.days)
+
+  // optional: limit the depth of the dependency traversal, default is 0 = only the root level, null = no limit
+  maxTransitiveDepth = 5
 }
 ```
 
@@ -45,6 +48,7 @@ libyear {
   configurations = ['compileClasspath']
   failOnError = true
   validator = allArtifactsCombinedMustNotBeOlderThan(days(5))
+  maxTransitiveDepth = 5
 }
 ```
 
