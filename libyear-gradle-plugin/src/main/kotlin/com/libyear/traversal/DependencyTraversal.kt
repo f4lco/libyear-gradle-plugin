@@ -50,7 +50,7 @@ class DependencyTraversal private constructor(
       root: ResolvedComponentResult,
       visitor: DependencyVisitor,
       maxTransitiveDepth: Int? = null,
-      excludedPackages: Set<String> = setOf()
+      excludedPackages: Set<String> = emptySet()
     ): Unit = DependencyTraversal(visitor, maxTransitiveDepth, excludedPackages).visit(root, depth = 0)
   }
 }
