@@ -6,9 +6,10 @@ import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 
 class DependencyTraversal private constructor(
+  private val logger: Logger,
   private val visitor: DependencyVisitor,
   private val maxTransitiveDepth: Int?,
-  private val excludedPackages: Set<String>
+  private val excludedModules: Set<String>
 ) {
 
   private val seen = mutableSetOf<ComponentIdentifier>()
@@ -29,7 +30,9 @@ class DependencyTraversal private constructor(
           continue
         }
 
-        if (excludedPackages.any { selected.moduleVersion.toString().contains(it, ignoreCase = true) }) {
+        val matchedExclusion = excludedModules.find { dependency.selected.moduleVersion.toString().contains(it, ignoreCase = true) }
+        if (matchedExclusion) {
+          logger.info("Excluding ${selected.moduleVersion} because it matches $matchedExclusion")
           continue
         }
         
@@ -47,10 +50,12 @@ class DependencyTraversal private constructor(
   companion object {
 
     fun visit(
+      logger: Logger,
       root: ResolvedComponentResult,
+      logger: Logger,
       visitor: DependencyVisitor,
       maxTransitiveDepth: Int? = null,
-      excludedPackages: Set<String> = emptySet()
-    ): Unit = DependencyTraversal(visitor, maxTransitiveDepth, excludedPackages).visit(root, depth = 0)
+      excludedModules: Set<String> = emptySet()
+    ): Unit = DependencyTraversal(logger, visitor, maxTransitiveDepth, excludedModules).visit(root, depth = 0)
   }
 }

@@ -59,7 +59,7 @@ class LibYearPlugin : Plugin<Project> {
     val ageOracle = createOracle(project, extension)
     val validator = createValidator(project, extension)
     val visitor = ValidatingVisitor(project.logger, ageOracle, validator, ValidationConfig(failOnError = extension.failOnError))
-    DependencyTraversal.visit(resolvableDependencies.resolutionResult.root, visitor, extension.maxTransitiveDepth, extension.excludedPackages)
+    DependencyTraversal.visit(project.logger, resolvableDependencies.resolutionResult.root, visitor, extension.maxTransitiveDepth, extension.excludedModules)
     maybeReportFailure(project.logger, validator)
   }
 
