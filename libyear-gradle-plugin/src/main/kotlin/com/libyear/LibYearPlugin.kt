@@ -64,8 +64,8 @@ class LibYearPlugin : Plugin<Project> {
       resolvableDependencies.resolutionResult.root,
       visitor,
       extension.maxTransitiveDepth,
-      extension.excludedModules,
-      extension.includedModules
+      extension.excludeModules,
+      extension.includeModules
     )
     maybeReportFailure(project.logger, validator)
   }
