@@ -1,6 +1,5 @@
 package com.libyear.traversal
 
-import com.libyear.LibYearExtension
 import com.libyear.sourcing.DefaultVersionOracle
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
@@ -23,11 +22,11 @@ class DependencyTraversalTest {
     val project = ProjectBuilder.builder().build()
     val visitorSpy = spy(ReportingVisitor(project.logger, mock<DefaultVersionOracle>()))
 
-    val rootComponent = mockResolvedComponentResult("root-component")
-    val slf4jComponent = rootComponent.addDependency("org.slf4j:slf4j")
-    val slf4jCoreComponent = rootComponent.addDependency("org.slf4j:slf4j-core")
-    val slf4jCoreSubComponentA = slf4jCoreComponent.addDependency("org.slf4j:slf4j-core-a")
-    val slf4jCoreSubComponentB = slf4jCoreComponent.addDependency("org.slf4j:slf4j-core-b")
+    val rootComponent = mockResolvedComponentResult("root", "component")
+    val slf4jComponent = rootComponent.addDependency("org.slf4j", "slf4j")
+    val slf4jCoreComponent = rootComponent.addDependency("org.slf4j", "slf4j-core")
+    val slf4jCoreSubComponentA = slf4jCoreComponent.addDependency("org.slf4j", "slf4j-core-a")
+    val slf4jCoreSubComponentB = slf4jCoreComponent.addDependency("org.slf4j", "slf4j-core-b")
 
     DependencyTraversal.visit(
       project.logger,
@@ -56,11 +55,11 @@ class DependencyTraversalTest {
       "*slf4j-core*" // Will include slf4j-core
     )
 
-    val rootComponent = mockResolvedComponentResult("root-component")
-    val slf4jComponent = rootComponent.addDependency("org.slf4j:slf4j")
-    val slf4jCoreComponent = rootComponent.addDependency("org.slf4j:slf4j-core")
-    val slf4jCoreSubComponentA = slf4jCoreComponent.addDependency("org.slf4j:slf4j-core-a")
-    val slf4jCoreSubComponentB = slf4jCoreComponent.addDependency("org.slf4j:slf4j-core-b")
+    val rootComponent = mockResolvedComponentResult("root", "component")
+    val slf4jComponent = rootComponent.addDependency("org.slf4j", "slf4j")
+    val slf4jCoreComponent = rootComponent.addDependency("org.slf4j", "slf4j-core")
+    val slf4jCoreSubComponentA = slf4jCoreComponent.addDependency("org.slf4j", "slf4j-core-a")
+    val slf4jCoreSubComponentB = slf4jCoreComponent.addDependency("org.slf4j", "slf4j-core-b")
 
     DependencyTraversal.visit(
       project.logger,
@@ -85,11 +84,11 @@ class DependencyTraversalTest {
     val project = ProjectBuilder.builder().build()
     val visitorSpy = spy(ReportingVisitor(project.logger, mock<DefaultVersionOracle>()))
 
-    val rootComponent = mockResolvedComponentResult("root-component")
-    val slf4jComponent = rootComponent.addDependency("org.slf4j:slf4j")
-    val slf4jCoreComponent = rootComponent.addDependency("org.slf4j:slf4j-core")
-    val slf4jCoreSubComponentA = slf4jCoreComponent.addDependency("org.slf4j:slf4j-core-a")
-    val slf4jCoreSubComponentB = slf4jCoreComponent.addDependency("org.slf4j:slf4j-core-b")
+    val rootComponent = mockResolvedComponentResult("root", "component")
+    val slf4jComponent = rootComponent.addDependency("org.slf4j", "slf4j")
+    val slf4jCoreComponent = rootComponent.addDependency("org.slf4j", "slf4j-core")
+    val slf4jCoreSubComponentA = slf4jCoreComponent.addDependency("org.slf4j", "slf4j-core-a")
+    val slf4jCoreSubComponentB = slf4jCoreComponent.addDependency("org.slf4j", "slf4j-core-b")
 
     DependencyTraversal.visit(
       project.logger,
@@ -119,20 +118,23 @@ class DependencyTraversalTest {
     assertEquals("**".wildcardToRegex().toString(), "^.*.*$")
   }
 
-  private fun mockResolvedComponentResult(moduleName: String): ResolvedDependencyResult {
+  private fun mockResolvedComponentResult(group: String, name: String): ResolvedDependencyResult {
     val componentResult = mock<ResolvedComponentResult>().apply {
-      val version = mock<ModuleVersionIdentifier>().apply { whenever(this.name).thenReturn(moduleName) }
+      val version = mock<ModuleVersionIdentifier>().apply {
+        whenever(this.group).thenReturn(group)
+        whenever(this.name).thenReturn(name)
+      }
       whenever(this.moduleVersion).thenReturn(version)
-      whenever(this.id).thenReturn(ComponentIdentifier { moduleName })
+      whenever(this.id).thenReturn(ComponentIdentifier { "$group:$name" })
     }
     return mock<ResolvedDependencyResult>().apply {
       whenever(this.selected).thenReturn(componentResult)
     }
   }
 
-  private fun ResolvedDependencyResult.addDependency(moduleName: String): ResolvedDependencyResult {
+  private fun ResolvedDependencyResult.addDependency(group: String, name: String): ResolvedDependencyResult {
     val parent = this@addDependency.selected
-    return mockResolvedComponentResult(moduleName).apply {
+    return mockResolvedComponentResult(group, name).apply {
       val newDependencies = (parent.dependencies + this).toMutableSet()
       whenever(parent.dependencies).thenReturn(newDependencies)
     }

@@ -31,7 +31,9 @@ class DependencyTraversal private constructor(
       if (!visitor.canContinue()) return
 
       if (dependency is ResolvedDependencyResult) {
-        if (shouldIncludeModule(dependency.selected.moduleVersion?.name.toString(), depth)) {
+        val group = dependency.selected.moduleVersion?.group.toString()
+        val name = dependency.selected.moduleVersion?.name.toString()
+        if (shouldIncludeModule("$group:$name", depth)) {
           nextComponents.add(dependency.selected)
         }
       }
@@ -55,6 +57,8 @@ class DependencyTraversal private constructor(
     // Inclusions supersede exclusions
     val matchedInclusion = includePatterns.firstOrNull { pattern -> pattern.second.matches(module) }
     val matchedExclusion = excludePatterns.firstOrNull { pattern -> pattern.second.matches(module) }
+
+    logger.lifecycle("Testing module '$module'")
 
     if(matchedInclusion != null) {
       logger.info("Including $module because it matches ${matchedInclusion.first}")
