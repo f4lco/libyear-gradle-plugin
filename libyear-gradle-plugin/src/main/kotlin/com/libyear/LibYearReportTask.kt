@@ -20,8 +20,8 @@ open class LibYearReportTask : DefaultTask() {
           it.incoming.resolutionResult.root, 
           visitor, 
           extension.maxTransitiveDepth, 
-          extension.excludedModules,
-          extension.includedModules
+          extension.excludeModules,
+          extension.includeModules
         )
         visitor.print()
       }

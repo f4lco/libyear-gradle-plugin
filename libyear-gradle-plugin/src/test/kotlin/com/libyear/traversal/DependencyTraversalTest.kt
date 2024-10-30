@@ -48,11 +48,11 @@ class DependencyTraversalTest {
     val project = ProjectBuilder.builder().build()
     val visitorSpy = spy(ReportingVisitor(project.logger, mock<DefaultVersionOracle>()))
 
-    val excludedModules = setOf(
+    val excludeModules = setOf(
       "org.slf4j*", // Will exclude all slf4j
       "*core-b" // Will NOT include slf4j-core-b because the inclusion of slf4j-core supersedes
     )
-    val includedModules = setOf(
+    val includeModules = setOf(
       "*slf4j-core*" // Will include slf4j-core
     )
 
@@ -67,8 +67,8 @@ class DependencyTraversalTest {
       rootComponent.selected,
       visitorSpy,
       10,
-      excludedModules,
-      includedModules
+      excludeModules,
+      includeModules
     )
 
     verify(visitorSpy).visitComponentResult(eq(rootComponent.selected))

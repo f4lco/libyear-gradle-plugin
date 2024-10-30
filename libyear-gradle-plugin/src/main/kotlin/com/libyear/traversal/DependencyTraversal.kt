@@ -11,11 +11,11 @@ class DependencyTraversal private constructor(
   private val logger: Logger,
   private val visitor: DependencyVisitor,
   private val maxTransitiveDepth: Int?,
-  excludedModules: Set<String>,
-  includedModules: Set<String>
+  excludeModules: Set<String>,
+  includeModules: Set<String>
 ) {
-  private val excludedPatterns = excludedModules.map { it to it.wildcardToRegex() }
-  private val includedPatterns = includedModules.map { it to it.wildcardToRegex() }
+  private val excludePatterns = excludeModules.map { it to it.wildcardToRegex() }
+  private val includePatterns = includeModules.map { it to it.wildcardToRegex() }
 
   private val seen = mutableSetOf<ComponentIdentifier>()
 
@@ -53,8 +53,8 @@ class DependencyTraversal private constructor(
     }
 
     // Inclusions supersede exclusions
-    val matchedInclusion = includedPatterns.firstOrNull { pattern -> pattern.second.matches(module) }
-    val matchedExclusion = excludedPatterns.firstOrNull { pattern -> pattern.second.matches(module) }
+    val matchedInclusion = includePatterns.firstOrNull { pattern -> pattern.second.matches(module) }
+    val matchedExclusion = excludePatterns.firstOrNull { pattern -> pattern.second.matches(module) }
 
     if(matchedInclusion != null) {
       logger.info("Including $module because it matches ${matchedInclusion.first}")
@@ -73,14 +73,14 @@ class DependencyTraversal private constructor(
       root: ResolvedComponentResult,
       visitor: DependencyVisitor,
       maxTransitiveDepth: Int? = null,
-      excludedModules: Set<String> = emptySet(),
-      includedModules: Set<String> = emptySet()
+      excludeModules: Set<String> = emptySet(),
+      includeModules: Set<String> = emptySet()
     ): Unit = DependencyTraversal(
       logger,
       visitor,
       maxTransitiveDepth,
-      excludedModules,
-      includedModules
+      excludeModules,
+      includeModules
     ).visit(root, depth = 0)
 
     @VisibleForTesting
