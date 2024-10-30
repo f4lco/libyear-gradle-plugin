@@ -58,8 +58,6 @@ class DependencyTraversal private constructor(
     val matchedInclusion = includePatterns.firstOrNull { pattern -> pattern.second.matches(module) }
     val matchedExclusion = excludePatterns.firstOrNull { pattern -> pattern.second.matches(module) }
 
-    logger.lifecycle("Testing module '$module'")
-
     if(matchedInclusion != null) {
       logger.info("Including $module because it matches ${matchedInclusion.first}")
     } else if(matchedExclusion != null) {
