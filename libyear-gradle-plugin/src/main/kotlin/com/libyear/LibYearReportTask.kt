@@ -15,12 +15,13 @@ open class LibYearReportTask : DefaultTask() {
       .forEach {
         val ageOracle = createOracle(project, extension)
         val visitor = ReportingVisitor(project.logger, ageOracle)
-        DependencyTraversal.visit
+        DependencyTraversal.visit(
           project.logger, 
           it.incoming.resolutionResult.root, 
           visitor, 
           extension.maxTransitiveDepth, 
-          extension.excludedModules
+          extension.excludedModules,
+          extension.includedModules
         )
         visitor.print()
       }
