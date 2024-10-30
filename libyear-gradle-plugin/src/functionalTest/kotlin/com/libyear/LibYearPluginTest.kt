@@ -47,7 +47,8 @@ internal class LibYearPluginTest {
       .contains("from 3 dependencies")
       .contains("org.apache.commons:commons-text")
       .contains("org.apache.commons:commons-collections")
-      .contains("org.slf4j")
+      .contains("slf4j-simple")
+      .doesNotContain("slf4j-api")
     assertThat(output).doesNotContain("unknown.package")
   }
 
