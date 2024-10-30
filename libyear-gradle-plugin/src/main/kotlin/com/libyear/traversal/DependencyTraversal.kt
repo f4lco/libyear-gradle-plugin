@@ -58,9 +58,9 @@ class DependencyTraversal private constructor(
     val matchedInclusion = includePatterns.firstOrNull { pattern -> pattern.second.matches(module) }
     val matchedExclusion = excludePatterns.firstOrNull { pattern -> pattern.second.matches(module) }
 
-    if(matchedInclusion != null) {
+    if (matchedInclusion != null) {
       logger.info("Including $module because it matches ${matchedInclusion.first}")
-    } else if(matchedExclusion != null) {
+    } else if (matchedExclusion != null) {
       logger.info("Excluding $module because it matches ${matchedExclusion.first}")
       return false
     }
@@ -88,7 +88,7 @@ class DependencyTraversal private constructor(
     @VisibleForTesting
     fun String.wildcardToRegex(): Regex {
       val globsToRegex = this.replace(".", "\\.").replace("*", ".*")
-      return "^${globsToRegex}$".toRegex(RegexOption.IGNORE_CASE)
+      return "^$globsToRegex$".toRegex(RegexOption.IGNORE_CASE)
     }
   }
 }

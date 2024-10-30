@@ -1,14 +1,14 @@
 package com.libyear.traversal
 
 import com.libyear.sourcing.DefaultVersionOracle
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.*
 import com.libyear.traversal.DependencyTraversal.Companion.wildcardToRegex
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.testfixtures.ProjectBuilder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
