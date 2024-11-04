@@ -24,8 +24,8 @@ open class LibYearExtension {
 
   var configurations: List<String> = defaultConfigurations
 
-  var excludeModules: Set<String> = emptySet()
-  var includeModules: Set<String> = emptySet()
+  var excludedModules: Set<String> = emptySet()
+  var includedModules: Set<String> = emptySet()
 
   // DSL for build script authors
 
