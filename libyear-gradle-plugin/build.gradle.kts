@@ -82,6 +82,7 @@ dependencies {
 
   testImplementation("com.squareup.okhttp3:mockwebserver:4.8.1")
   testImplementation("org.mockito:mockito-core:3.7.7")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
   testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
   testImplementation("org.assertj:assertj-core:3.18.1")
@@ -97,6 +98,7 @@ tasks.withType(Test::class) {
   testLogging {
     events("started")
     showExceptions = true
+    showStandardStreams = true
   }
 }
 

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
  * Adapter selection: the algorithm prefers to select an adapter by name of the repository Gradle has
  * sourced the artifact from, see [adapters]. If none is present, [defaultAdapter] is queried.
  */
-class DefaultVersionOracle(
+open class DefaultVersionOracle(
   private val defaultAdapter: VersionInfoAdapter,
   private val adapters: Map<String, VersionInfoAdapter>,
   private val repositories: Map<String, ArtifactRepository>
