@@ -37,8 +37,8 @@ internal class LibYearPluginTest {
   }
 
   @Test
-  fun testExcludeModules() {
-    setUpProject("excludeModules.gradle.kts")
+  fun testExcludedModules() {
+    setUpProject("excludedModules.gradle.kts")
 
     val result = withGradleRunner("reportLibyears").build()
     val output = result.output
