@@ -2,34 +2,23 @@
   "collected" : [ {
     "module" : {
       "version" : "1.9",
+      "group" : "org.apache.commons",
       "module" : {
         "group" : "org.apache.commons",
         "name" : "commons-text"
       },
-      "name" : "commons-text",
-      "group" : "org.apache.commons"
+      "name" : "commons-text"
     },
     "lag_days" : 1361
   }, {
     "module" : {
-      "version" : "3.11",
-      "module" : {
-        "group" : "org.apache.commons",
-        "name" : "commons-lang3"
-      },
-      "name" : "commons-lang3",
-      "group" : "org.apache.commons"
-    },
-    "lag_days" : 1504
-  }, {
-    "module" : {
       "version" : "4.4",
+      "group" : "org.apache.commons",
       "module" : {
         "group" : "org.apache.commons",
         "name" : "commons-collections4"
       },
-      "name" : "commons-collections4",
-      "group" : "org.apache.commons"
+      "name" : "commons-collections4"
     },
     "lag_days" : 1806
   } ],
