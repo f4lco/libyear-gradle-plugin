@@ -36,9 +36,24 @@ internal class LibYearPluginTest {
       .extracting { it?.outcome }.isEqualTo(TaskOutcome.FAILED)
   }
 
-  private fun withGradleRunner() = GradleRunner.create().apply {
+  @Test
+  fun testReportLibyear() {
+    setUpProject("valid.gradle.kts")
+    withGradleRunner("reportLibyear").build()
+    val libyearJsonFile = project.resolve("build/reports/libyear/libyear.json").toFile().readText()
+    val expectedJson = javaClass.getResourceAsStream("expectedReport.json")?.bufferedReader()?.use { it.readText() }
+
+    // Replace lagDays values with 0 using regex so reports match despite age
+    val lagDaysRegex = "\"lagDays\":\\s*\\d+".toRegex()
+    val normalizedLibyearJson = libyearJsonFile.replace(lagDaysRegex, "\"lagDays\": 0")
+    val normalizedExpectedJson = expectedJson?.replace(lagDaysRegex, "\"lagDays\": 0")
+
+    assertThat(normalizedLibyearJson).isEqualToIgnoringWhitespace(normalizedExpectedJson)
+  }
+
+  private fun withGradleRunner(command: String = "dependencies") = GradleRunner.create().apply {
     withProjectDir(project.toFile())
-    withArguments("dependencies")
+    withArguments(command)
     withPluginClasspath()
   }
 

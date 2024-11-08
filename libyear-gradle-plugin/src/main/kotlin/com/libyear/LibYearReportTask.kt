@@ -17,6 +17,7 @@ open class LibYearReportTask : DefaultTask() {
         val visitor = ReportingVisitor(project.logger, ageOracle)
         DependencyTraversal.visit(it.incoming.resolutionResult.root, visitor, extension.maxTransitiveDepth)
         visitor.print()
+        visitor.saveReportToJson(project)
       }
   }
 }
