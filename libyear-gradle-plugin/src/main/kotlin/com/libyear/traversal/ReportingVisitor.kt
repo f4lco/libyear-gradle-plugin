@@ -1,6 +1,8 @@
 package com.libyear.traversal
 
+import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.libyear.sourcing.VersionOracle
 import com.libyear.util.formatApproximate
@@ -85,14 +87,14 @@ class ReportingVisitor(
     val report = mapOf(
       "collected" to collected.map {
         mapOf(
-          "module" to it.module,
+          "module" to ReportModule(it.module),
           "lag_days" to it.lag.toDays()
         )
       },
-      "missing_info" to missingInfo,
-      "errors" to errors
+      "missing_info" to missingInfo.map(::ReportModule),
+      "errors" to errors.map(::ReportModule)
     )
-    val objectMapper = ObjectMapper().registerKotlinModule()
+    val objectMapper = ObjectMapper().registerKotlinModule().configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
     val json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(report)
     val reportFile = File(project.buildDir, "reports/libyear/libyear.json")
     reportFile.parentFile.mkdirs()
@@ -106,4 +108,15 @@ class ReportingVisitor(
     ModuleVersionIdentifier::getName,
     ModuleVersionIdentifier::getVersion
   )
+
+  /** JSON-serializable subset of [ModuleVersionIdentifier]. **/
+  data class ReportModule(
+    val group: String,
+    val name: String,
+    val version: String
+  ) {
+
+    constructor(mvi: ModuleVersionIdentifier):
+      this(mvi.group, mvi.name, mvi.version)
+  }
 }

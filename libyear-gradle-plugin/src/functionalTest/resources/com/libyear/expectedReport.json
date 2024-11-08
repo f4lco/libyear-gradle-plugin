@@ -1,24 +1,16 @@
 {
   "collected" : [ {
     "module" : {
-      "version" : "1.9",
       "group" : "org.apache.commons",
-      "module" : {
-        "group" : "org.apache.commons",
-        "name" : "commons-text"
-      },
-      "name" : "commons-text"
+      "name" : "commons-text",
+      "version" : "1.9"
     },
     "lag_days" : 1361
   }, {
     "module" : {
-      "version" : "4.4",
       "group" : "org.apache.commons",
-      "module" : {
-        "group" : "org.apache.commons",
-        "name" : "commons-collections4"
-      },
-      "name" : "commons-collections4"
+      "name" : "commons-collections4",
+      "version" : "4.4"
     },
     "lag_days" : 1806
   } ],
