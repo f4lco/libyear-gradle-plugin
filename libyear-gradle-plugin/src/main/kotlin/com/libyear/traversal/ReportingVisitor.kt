@@ -2,7 +2,6 @@ package com.libyear.traversal
 
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.libyear.sourcing.VersionOracle
 import com.libyear.util.formatApproximate
@@ -116,7 +115,7 @@ class ReportingVisitor(
     val version: String
   ) {
 
-    constructor(mvi: ModuleVersionIdentifier):
+    constructor(mvi: ModuleVersionIdentifier) :
       this(mvi.group, mvi.name, mvi.version)
   }
 }
