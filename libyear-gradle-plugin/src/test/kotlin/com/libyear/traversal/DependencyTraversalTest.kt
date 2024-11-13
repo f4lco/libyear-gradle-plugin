@@ -47,12 +47,11 @@ class DependencyTraversalTest {
     val project = ProjectBuilder.builder().build()
     val visitorSpy = spy(ReportingVisitor(project.logger, mock<DefaultVersionOracle>()))
 
-    val excludedModules = setOf(
-      "org.slf4j*", // Will exclude all slf4j
-      "*core-b" // Will NOT include slf4j-core-b because the inclusion of slf4j-core supersedes
-    )
     val includedModules = setOf(
-      "*slf4j-core*" // Will include slf4j-core
+      "org.slf4j*" // Will include all org.slf4j modules
+    )
+    val excludedModules = setOf(
+      "*core-b" // Will NOT include slf4j-core-b
     )
 
     val rootComponent = mockResolvedComponentResult("root", "component")
@@ -72,11 +71,45 @@ class DependencyTraversalTest {
 
     verify(visitorSpy).visitComponentResult(eq(rootComponent.selected))
     // Excluded:
-    verify(visitorSpy, never()).visitComponentResult(eq(slf4jComponent.selected))
+    verify(visitorSpy, never()).visitComponentResult(eq(slf4jCoreSubComponentB.selected))
     // Included
+    verify(visitorSpy).visitComponentResult(eq(slf4jComponent.selected))
     verify(visitorSpy).visitComponentResult(eq(slf4jCoreComponent.selected))
     verify(visitorSpy).visitComponentResult(eq(slf4jCoreSubComponentA.selected))
-    verify(visitorSpy).visitComponentResult(eq(slf4jCoreSubComponentB.selected))
+  }
+
+  @Test
+  fun testExcludeDependencies() {
+    val project = ProjectBuilder.builder().build()
+    val visitorSpy = spy(ReportingVisitor(project.logger, mock<DefaultVersionOracle>()))
+
+    val includedModules = emptySet<String>() // empty set means all are included
+    val excludedModules = setOf(
+      "*slf4j-core*" // Will NOT include core modules
+    )
+
+    val rootComponent = mockResolvedComponentResult("root", "component")
+    val slf4jComponent = rootComponent.addDependency("org.slf4j", "slf4j")
+    val slf4jCoreComponent = rootComponent.addDependency("org.slf4j", "slf4j-core")
+    val slf4jCoreSubComponentA = slf4jCoreComponent.addDependency("org.slf4j", "slf4j-core-a")
+    val slf4jCoreSubComponentB = slf4jCoreComponent.addDependency("org.slf4j", "slf4j-core-b")
+
+    DependencyTraversal.visit(
+      project.logger,
+      rootComponent.selected,
+      visitorSpy,
+      10,
+      excludedModules,
+      includedModules
+    )
+
+    verify(visitorSpy).visitComponentResult(eq(rootComponent.selected))
+    // Excluded:
+    verify(visitorSpy, never()).visitComponentResult(eq(slf4jCoreComponent.selected))
+    verify(visitorSpy, never()).visitComponentResult(eq(slf4jCoreSubComponentA.selected))
+    verify(visitorSpy, never()).visitComponentResult(eq(slf4jCoreSubComponentB.selected))
+    // Included
+    verify(visitorSpy).visitComponentResult(eq(slf4jComponent.selected))
   }
 
   @Test

@@ -50,6 +50,7 @@ internal class LibYearPluginTest {
       .contains("slf4j-simple")
       .doesNotContain("slf4j-api")
     assertThat(output).doesNotContain("unknown.package")
+  }
 
   @Test
   fun testReportLibyear() {
