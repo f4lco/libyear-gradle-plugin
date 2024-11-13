@@ -106,6 +106,10 @@ BUILD SUCCESSFUL in 28s
 
 ## Changelog
 
+### 0.2.1 (2024-11-08)
+
+Thanks to @Breefield the plugin now writes a JSON report in `build/reports` which contains a machine-readable report of Libyears per dependency 🚀
+
 ### 0.2.0 (2024-10-16)
 
 @Breefield added the `maxTransitiveDepth` toggle to put an upper bound to the depth of dependency traversal.  

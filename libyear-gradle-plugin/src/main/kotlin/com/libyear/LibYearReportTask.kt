@@ -24,6 +24,7 @@ open class LibYearReportTask : DefaultTask() {
           extension.includedModules
         )
         visitor.print()
+        visitor.saveReportToJson(project)
       }
   }
 }

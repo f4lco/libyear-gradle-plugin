@@ -1,0 +1,19 @@
+{
+  "collected" : [ {
+    "module" : {
+      "group" : "org.apache.commons",
+      "name" : "commons-text",
+      "version" : "1.9"
+    },
+    "lag_days" : 1361
+  }, {
+    "module" : {
+      "group" : "org.apache.commons",
+      "name" : "commons-collections4",
+      "version" : "4.4"
+    },
+    "lag_days" : 1806
+  } ],
+  "missing_info" : [ ],
+  "errors" : [ ]
+}
