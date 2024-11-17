@@ -106,6 +106,10 @@ BUILD SUCCESSFUL in 28s
 
 ## Changelog
 
+### 0.3.1 (2024-11-17)
+
+We have merged two Dependabot PRs with GitHub Action version bumps for this patch release.
+
 ### 0.3.0 (2024-11-17)
 
 Thanks to @Breefield the plugin now supports inclusion and exclusion filters on dependencies.
