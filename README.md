@@ -106,6 +106,19 @@ BUILD SUCCESSFUL in 28s
 
 ## Changelog
 
+### 0.3.0 (2024-11-17)
+
+Thanks to @Breefield the plugin now supports inclusion and exclusion filters on dependencies.
+By example,
+
+- Exclusion patterns allow to exclude Libyears from a particular framework, for example Spring, and
+- Inclusion patterns allow to "narrow down" on a particular set of dependencies, which allows to answer questions such as "how many Libyears do internal artifacts from 'com.mycompany' bring in?"
+
+If build authors use both pattern in conjunction, the plugin narrows down the dependencies to the inclusion list, and then proceeds to filter out dependencies matching the exclusion pattern(s).
+
+Patterns allow for globbing, for example, the pattern `com.mycompany:*` matches all artifacts with group name "com.mycompany",
+and `com.mycompany:logging-*` would match all artifact names starting with "logging".
+
 ### 0.2.1 (2024-11-08)
 
 Thanks to @Breefield the plugin now writes a JSON report in `build/reports` which contains a machine-readable report of Libyears per dependency 🚀
