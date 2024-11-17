@@ -37,6 +37,19 @@ internal class LibYearPluginTest {
   }
 
   @Test
+  fun testFilterModules() {
+    setUpProject("filterModules.gradle.kts")
+
+    val result = withGradleRunner("reportLibyears").build()
+    val output = result.output
+
+    assertThat(output)
+      .contains("from 1 dependencies")
+      .contains("org.slf4j:slf4j-api")
+    assertThat(output).doesNotContain("unknown.package")
+  }
+
+  @Test
   fun testReportLibyear() {
     setUpProject("valid.gradle.kts")
     withGradleRunner("reportLibyear").build()

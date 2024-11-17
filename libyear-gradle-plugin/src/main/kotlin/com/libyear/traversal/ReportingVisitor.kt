@@ -19,7 +19,7 @@ private data class ReportingInfo(
   val latestVersion: String
 )
 
-class ReportingVisitor(
+open class ReportingVisitor(
   logger: Logger,
   private val ageOracle: VersionOracle
 ) : DependencyVisitor(logger) {
