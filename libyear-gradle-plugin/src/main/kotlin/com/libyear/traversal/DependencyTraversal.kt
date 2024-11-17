@@ -4,11 +4,18 @@ import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.result.ComponentResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.logging.Logger
+import org.gradle.internal.impldep.com.google.common.annotations.VisibleForTesting
 
 class DependencyTraversal private constructor(
+  private val logger: Logger,
   private val visitor: DependencyVisitor,
-  private val maxTransitiveDepth: Int?
+  private val maxTransitiveDepth: Int?,
+  excludedModules: Set<String>,
+  includedModules: Set<String>
 ) {
+  private val excludedPatterns = excludedModules.map { it to it.wildcardToRegex() }
+  private val includedPatterns = includedModules.map { it to it.wildcardToRegex() }
 
   private val seen = mutableSetOf<ComponentIdentifier>()
 
@@ -24,10 +31,11 @@ class DependencyTraversal private constructor(
       if (!visitor.canContinue()) return
 
       if (dependency is ResolvedDependencyResult) {
-        if (maxTransitiveDepth != null && depth > maxTransitiveDepth) {
-          continue
+        val group = dependency.selected.moduleVersion?.group.toString()
+        val name = dependency.selected.moduleVersion?.name.toString()
+        if (shouldIncludeModule("$group:$name", depth)) {
+          nextComponents.add(dependency.selected)
         }
-        nextComponents.add(dependency.selected)
       }
     }
 
@@ -37,12 +45,55 @@ class DependencyTraversal private constructor(
     }
   }
 
+  @VisibleForTesting
+  fun shouldIncludeModule(
+    module: String,
+    depth: Int
+  ): Boolean {
+    if (maxTransitiveDepth != null && depth > maxTransitiveDepth) {
+      return false
+    }
+
+    // Inclusions supersede exclusions
+    val matchedInclusion = includedPatterns.firstOrNull { pattern -> pattern.second.matches(module) }
+    val matchedExclusion = excludedPatterns.firstOrNull { pattern -> pattern.second.matches(module) }
+
+    val matchesInclusions = includedPatterns.isEmpty() || matchedInclusion != null
+    val matchesExclusions = matchedExclusion != null
+    val shouldIncludeModule = matchesInclusions && !matchesExclusions
+
+    if (!shouldIncludeModule) {
+      if (matchesExclusions) {
+        logger.info("Excluding $module because it matches ${matchedExclusion!!.first}")
+      } else {
+        logger.info("Excluding $module because it does not match inclusion list")
+      }
+    }
+
+    return shouldIncludeModule
+  }
+
   companion object {
 
     fun visit(
+      logger: Logger,
       root: ResolvedComponentResult,
       visitor: DependencyVisitor,
-      maxTransitiveDepth: Int? = null
-    ): Unit = DependencyTraversal(visitor, maxTransitiveDepth).visit(root, depth = 0)
+      maxTransitiveDepth: Int? = null,
+      excludedModules: Set<String> = emptySet(),
+      includedModules: Set<String> = emptySet()
+    ): Unit = DependencyTraversal(
+      logger,
+      visitor,
+      maxTransitiveDepth,
+      excludedModules,
+      includedModules
+    ).visit(root, depth = 0)
+
+    @VisibleForTesting
+    fun String.wildcardToRegex(): Regex {
+      val globsToRegex = this.replace(".", "\\.").replace("*", ".*")
+      return "^$globsToRegex$".toRegex(RegexOption.IGNORE_CASE)
+    }
   }
 }
