@@ -37,18 +37,15 @@ internal class LibYearPluginTest {
   }
 
   @Test
-  fun testExcludedModules() {
-    setUpProject("excludedModules.gradle.kts")
+  fun testFilterModules() {
+    setUpProject("filterModules.gradle.kts")
 
     val result = withGradleRunner("reportLibyears").build()
     val output = result.output
 
     assertThat(output)
-      .contains("from 3 dependencies")
-      .contains("org.apache.commons:commons-text")
-      .contains("org.apache.commons:commons-collections")
-      .contains("slf4j-simple")
-      .doesNotContain("slf4j-api")
+      .contains("from 1 dependencies")
+      .contains("org.slf4j:slf4j-api")
     assertThat(output).doesNotContain("unknown.package")
   }
 

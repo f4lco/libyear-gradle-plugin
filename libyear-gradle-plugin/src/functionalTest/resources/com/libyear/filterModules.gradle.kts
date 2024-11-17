@@ -17,6 +17,6 @@ dependencies {
 libyear {
     failOnError = false
     validator = singleArtifactMustNotBeOlderThan(100.years)
-    excludedModules = setOf("org.slf4j*")
-    includedModules = setOf("*slf4j-simple")
+    excludedModules = setOf("*slf4j-simple")
+    includedModules = setOf("org.slf4j*")
 }
