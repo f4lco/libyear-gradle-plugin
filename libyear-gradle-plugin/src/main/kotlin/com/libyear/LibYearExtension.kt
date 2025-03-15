@@ -16,7 +16,11 @@ open class LibYearExtension {
 
   var versionAdapters = mutableMapOf<String, VersionInfoAdapter>()
 
-  var failOnError: Boolean = true
+  // Retry settings
+  var failOnError: Boolean = true 
+  var maxRetries: Int = 3
+  var initialRetryDelayMillis: Long = 2000
+  var retryBackoffMultiplier: Int = 2
 
   var validator: DependencyValidatorSpec = defaultValidator
 
@@ -27,10 +31,6 @@ open class LibYearExtension {
   var excludedModules: Set<String> = emptySet()
   var includedModules: Set<String> = emptySet()
   
-  // Retry settings
-  var maxRetries: Int = 3
-  var initialRetryDelayMillis: Long = 2000
-  var retryBackoffMultiplier: Int = 2
 
   // DSL for build script authors
 

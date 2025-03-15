@@ -26,6 +26,11 @@ libyear {
   
   // Fail in case fetching dependency metadata fails?
   failOnError = true
+
+  // Sometimes fetching dependency metadata fails, so we retry a few times, after all retries fail, we throw an exception and "failOnError" policy will be applied.
+  maxRetries: Int = 3
+  initialRetryDelayMillis: Long = 2000
+  retryBackoffMultiplier: Int = 2
   
   // How to validate:
   validator = allArtifactsCombinedMustNotBeOlderThan(5.years)
