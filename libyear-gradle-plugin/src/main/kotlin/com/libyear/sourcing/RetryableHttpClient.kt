@@ -27,54 +27,43 @@ class RetryableHttpClient(
      * @return The successful response, or throws an exception if all retries fail
      */
     fun executeWithRetry(request: Request): Response {
-        var retryCount = 0
-        var currentDelay = initialRetryDelayMillis
-        var lastException: IOException? = null
+    var retryCount = 0
+    var currentDelay = initialRetryDelayMillis
 
-        while (retryCount <= maxRetries) {
-            try {
-                val response = client.newCall(request).execute()
-                
-                if (response.isSuccessful) {
-                    return response
-                } else {
-                    // Close the unsuccessful response
-                    val errorBody = response.body?.string() ?: "No response body"
-                    val code = response.code
-                    response.close()
-                    
-                    if (retryCount == maxRetries) {
-                        throw IOException("Request failed after $retryCount retries. Last response code: $code, body: $errorBody")
-                    }
-                    
-                    logger.warn("Request to ${request.url} failed with code ${code}. Retrying (${retryCount + 1}/${maxRetries})...")
-                }
-            } catch (e: IOException) {
-                lastException = e
-                
-                if (retryCount == maxRetries) {
-                    throw IOException("Request failed after $retryCount retries", e)
-                }
-                
-                logger.warn("Request to ${request.url} failed with exception: ${e.message}. Retrying (${retryCount + 1}/${maxRetries})...")
-            }
-            
-            // Exponential backoff
-            if (retryCount < maxRetries) {
-                try {
-                    logger.debug("Waiting for ${currentDelay}ms before retry")
-                    TimeUnit.MILLISECONDS.sleep(currentDelay)
-                    currentDelay *= retryBackoffMultiplier
-                } catch (e: InterruptedException) {
-                    Thread.currentThread().interrupt()
-                    throw IOException("Retry interrupted", e)
-                }
-            }
-            
-            retryCount++
-        }
-        
-        // This should never happen due to the checks above, but just in case
-        throw lastException ?: IOException("Request failed after $maxRetries retries")
+    while (true) {
+      val response = try {
+        client.newCall(request).execute()
+      } catch (e: IOException) {
+        logger.warn("Request to '${request.url}' failed with exception: '${e.message}'. Retrying (${retryCount}/${maxRetries})...")
+        null
+      }
+
+      if (response != null && response.isSuccessful) {
+        return response
+      }
+
+      if (response != null) {
+        // Close the unsuccessful response
+        val errorBody = response.body?.string() ?: "No response body"
+        val code = response.code
+        response.close()
+        logger.warn("Request to ${request.url} failed with code $code and body '$errorBody'. Retrying (${retryCount}/${maxRetries})...")
+      }
+
+      if (retryCount == maxRetries) {
+        throw IOException("Request failed after $retryCount retries")
+      }
+
+      try {
+        logger.debug("Waiting for ${currentDelay}ms before retry")
+        TimeUnit.MILLISECONDS.sleep(currentDelay)
+      } catch (e: InterruptedException) {
+        Thread.currentThread().interrupt()
+        throw IOException("Retry interrupted", e)
+      }
+
+      retryCount++
+      currentDelay *= retryBackoffMultiplier
     }
+}
 } 
