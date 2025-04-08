@@ -10,7 +10,6 @@ import org.gradle.api.artifacts.ModuleIdentifier
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.internal.artifacts.DefaultModuleVersionIdentifier
-import java.io.IOException
 import java.time.Duration
 import java.time.Instant
 
@@ -36,10 +35,19 @@ import java.time.Instant
  * for Maven Central, one of the most popular repositories.
  */
 class SolrSearchAdapter(
-  private val repoUrl: String
+  private val repoUrl: String,
+  private val maxRetries: Int = 3,
+  private val initialRetryDelayMillis: Long = 2000,
+  private val retryBackoffMultiplier: Int = 2
 ) : VersionInfoAdapter {
 
   private val client = OkHttpClient()
+  private val retryableClient = RetryableHttpClient(
+    client = client,
+    maxRetries = maxRetries,
+    initialRetryDelayMillis = initialRetryDelayMillis,
+    retryBackoffMultiplier = retryBackoffMultiplier
+  )
   private val mapper = ObjectMapper()
 
   override fun get(m: ModuleVersionIdentifier, repository: ArtifactRepository) = Try.of {
@@ -83,13 +91,8 @@ class SolrSearchAdapter(
 
   private fun getResponseText(url: HttpUrl): String {
     val request = Request.Builder().url(url).build()
-    client.newCall(request).execute().use { response ->
-
-      if (!response.isSuccessful) {
-        throw IOException("Response for URL $url returned ${response.code}")
-      }
-
-      return response.body?.string() ?: throw IllegalStateException("HTTP response body for $url is empty")
+    return retryableClient.executeWithRetry(request).use { response ->
+      response.body?.string() ?: throw IllegalStateException("HTTP response body for $url is empty")
     }
   }
 
@@ -115,8 +118,15 @@ class SolrSearchAdapter(
 
   companion object {
 
-    fun forMavenCentral() = SolrSearchAdapter(
-      repoUrl = "https://search.maven.org/solrsearch/select"
+    fun forMavenCentral(
+      maxRetries: Int = 3,
+      initialRetryDelayMillis: Long = 2000,
+      retryBackoffMultiplier: Int = 2
+    ) = SolrSearchAdapter(
+      repoUrl = "https://search.maven.org/solrsearch/select",
+      maxRetries = maxRetries,
+      initialRetryDelayMillis = initialRetryDelayMillis,
+      retryBackoffMultiplier = retryBackoffMultiplier
     )
   }
 }

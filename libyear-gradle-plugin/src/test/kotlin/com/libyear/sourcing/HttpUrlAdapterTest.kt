@@ -25,14 +25,20 @@ internal class HttpUrlAdapterTest {
   @BeforeEach
   fun setUp() {
     server = MockWebServer()
-    adapter = HttpUrlAdapter()
+    server.start()
+    // Use shorter delays for testing
+    adapter = HttpUrlAdapter(
+      maxRetries = 2,
+      initialRetryDelayMillis = 50,
+      retryBackoffMultiplier = 2
+    )
     repo = mock(MavenArtifactRepository::class.java)
     given(repo.getUrl()).willReturn(server.url("artifacts").toUri())
   }
 
   @AfterEach
   fun tearDown() {
-    server.close()
+    server.shutdown()
   }
 
   @Test
@@ -90,20 +96,65 @@ internal class HttpUrlAdapterTest {
 
   @Test
   fun serverError() {
+    // Enqueue 3 errors (initial + 2 retries)
+    server.enqueue(MockResponse().setResponseCode(500))
+    server.enqueue(MockResponse().setResponseCode(500))
     server.enqueue(MockResponse().setResponseCode(500))
 
     val created = adapter.get(Fixtures.apacheCommonsTextArtifact, repo)
 
     assertThat(created).isEmpty()
+    assertThat(server.requestCount).isEqualTo(3) // Initial + 2 retries
+  }
+
+  @Test
+  fun serverErrorWithEventualSuccess() {
+    // First request fails, second succeeds
+    server.enqueue(MockResponse().setResponseCode(500))
+    server.enqueue(
+      MockResponse().setBody(
+        """
+      <metadata>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <versioning>
+      <latest>1.9</latest>
+      <release>1.9</release>
+      <versions>
+      <version>1.9</version>
+      </versions>
+      <lastUpdated>20200724213155</lastUpdated>
+      </versioning>
+      </metadata>
+        """.trimIndent()
+      )
+    )
+
+    val headersCurrent = Headers.headersOf().newBuilder().add("Last-Modified", now.minus(5, ChronoUnit.HOURS)).build()
+    server.enqueue(MockResponse().setHeaders(headersCurrent))
+
+    val headersLatest = Headers.headersOf().newBuilder().add("Last-Modified", now).build()
+    server.enqueue(MockResponse().setHeaders(headersLatest))
+
+    val created = adapter.get(Fixtures.apacheCommonsTextArtifact, repo)
+
+    assertThat(created).first().isEqualTo(
+      DependencyInfo(Fixtures.apacheCommonsTextArtifact, DependencyUpdate(nextVersion = "1.9", lag = Duration.ofHours(5)))
+    )
+    assertThat(server.requestCount).isEqualTo(4) // 1 failed + 3 successful
   }
 
   @Test
   fun notFound() {
+    // Enqueue 3 errors (initial + 2 retries)
+    server.enqueue(MockResponse().setResponseCode(404))
+    server.enqueue(MockResponse().setResponseCode(404))
     server.enqueue(MockResponse().setResponseCode(404))
 
     val created = adapter.get(Fixtures.apacheCommonsTextArtifact, repo)
 
     assertThat(created).isEmpty()
+    assertThat(server.requestCount).isEqualTo(3) // Initial + 2 retries
   }
 
   @Test

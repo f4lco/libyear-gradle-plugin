@@ -16,7 +16,11 @@ open class LibYearExtension {
 
   var versionAdapters = mutableMapOf<String, VersionInfoAdapter>()
 
+  // Retry settings
   var failOnError: Boolean = true
+  var maxRetries: Int = 3
+  var initialRetryDelayMillis: Long = 2000
+  var retryBackoffMultiplier: Int = 2
 
   var validator: DependencyValidatorSpec = defaultValidator
 

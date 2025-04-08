@@ -1,0 +1,49 @@
+# Cursor Rules for Libyear Gradle Plugin
+
+## Plugin Description
+The Libyear Gradle Plugin measures dependency freshness as a single metric called "libyears". It calculates how out-of-date your project dependencies are, reports outdated dependencies with their impact on total libyears, and can enforce freshness thresholds to fail builds when dependencies become too outdated.
+
+## Project Structure Overview
+The plugin is organized into several key components that work together:
+
+1. **Core Plugin Files** (`libyear-gradle-plugin/src/main/kotlin/com/libyear/`):
+   - `LibYearPlugin.kt`: Main entry point that registers the plugin with Gradle, configures dependency resolution hooks, and sets up the reporting task
+   - `LibYearExtension.kt`: Defines the DSL for configuring the plugin in build scripts, including validation thresholds and configuration options
+   - `LibYearReportTask.kt`: Implements the task that generates the dependency freshness report
+
+2. **Version Sourcing** (`libyear-gradle-plugin/src/main/kotlin/com/libyear/sourcing/`):
+   - `VersionOracle.kt`/`DefaultVersionOracle.kt`: Coordinates fetching version information from different sources
+   - `VersionInfoAdapter.kt`: Interface for adapters that retrieve version information
+   - `HttpUrlAdapter.kt`/`SolrSearchAdapter.kt`/`MavenLocalAdapter.kt`: Implementations for fetching version data from different repository types
+
+3. **Dependency Traversal** (`libyear-gradle-plugin/src/main/kotlin/com/libyear/traversal/`):
+   - `DependencyTraversal.kt`: Handles walking through the dependency graph
+   - `DependencyVisitor.kt`: Interface for visitors that process dependencies during traversal
+   - `ReportingVisitor.kt`: Collects and formats dependency information for reporting
+   - `ValidatingVisitor.kt`: Validates dependencies against configured thresholds
+
+4. **Validation Logic** (`libyear-gradle-plugin/src/main/kotlin/com/libyear/validator/`):
+   - `DependencyValidator.kt`/`DependencyValidatorSpec.kt`: Interfaces for validation strategies
+   - `AgeValidator.kt`: Validates individual dependency age against thresholds
+   - `CumulativeAgeValidator.kt`: Validates the total age of all dependencies
+   - `LoggingValidator.kt`: Handles logging validation results
+
+5. **Utilities** (`libyear-gradle-plugin/src/main/kotlin/com/libyear/util/`):
+   - `DurationFormatter.kt`: Formats durations for human-readable output
+
+The plugin works by hooking into Gradle's dependency resolution process, traversing the dependency graph, fetching the latest version information for each dependency, calculating the "libyear" metric (time difference between used version and latest version), and then either reporting or failing the build based on configured thresholds.
+
+## How to Run Tests in the Main Plugin Module:
+./gradlew :libyear-gradle-plugin:test --info
+
+## Running a Specific Test Class: 
+./gradlew test --tests "fully.qualified.TestClassName" --info
+Example: `./gradlew test --tests "com.libyear.sourcing.AgeValidatorTest"`
+
+## Running a Specific Test Method
+./gradlew test --tests "fully.qualified.TestClassName.methodName"
+Example: `./gradlew test --tests "com.libyear.sourcing.AgeValidatorTest.testValid"` --info
+
+## Test Structure
+- Main test directory: `libyear-gradle-plugin/src/test/kotlin/`
+- Test classes are organized by package under `com.libyear.*`

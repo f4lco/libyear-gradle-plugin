@@ -105,17 +105,25 @@ class LibYearPlugin : Plugin<Project> {
 
 fun createOracle(project: Project, extension: LibYearExtension): VersionOracle =
   DefaultVersionOracle(
-    HttpUrlAdapter(),
+    HttpUrlAdapter(
+      maxRetries = extension.maxRetries,
+      initialRetryDelayMillis = extension.initialRetryDelayMillis,
+      retryBackoffMultiplier = extension.retryBackoffMultiplier
+    ),
     collectRepositoryToVersionAdapter(extension),
     collectAllRepositories(project)
   )
 
 private fun collectRepositoryToVersionAdapter(extension: LibYearExtension): Map<String, VersionInfoAdapter> {
-  return defaultAdaptersByRepository() + extension.versionAdapters
+  return defaultAdaptersByRepository(extension) + extension.versionAdapters
 }
 
-private fun defaultAdaptersByRepository() = mapOf(
-  ArtifactRepositoryContainer.DEFAULT_MAVEN_CENTRAL_REPO_NAME to SolrSearchAdapter.forMavenCentral(),
+private fun defaultAdaptersByRepository(extension: LibYearExtension) = mapOf(
+  ArtifactRepositoryContainer.DEFAULT_MAVEN_CENTRAL_REPO_NAME to SolrSearchAdapter.forMavenCentral(
+    maxRetries = extension.maxRetries,
+    initialRetryDelayMillis = extension.initialRetryDelayMillis,
+    retryBackoffMultiplier = extension.retryBackoffMultiplier
+  ),
   ArtifactRepositoryContainer.DEFAULT_MAVEN_LOCAL_REPO_NAME to MavenLocalAdapter()
 )
 
