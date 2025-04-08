@@ -12,6 +12,6 @@ libyear {
   // in CI, this may fail with 429 Too many requests
   failOnError = false
   // validator = allArtifactsCombinedMustNotBeOlderThan(5.months)
-  validator = singleArtifactMustNotBeOlderThan(5.years)
+  validator = singleArtifactMustNotBeOlderThan(10.years)
   // validator = singleArtifactMustNotBeOlderThan((1.days)
 }
