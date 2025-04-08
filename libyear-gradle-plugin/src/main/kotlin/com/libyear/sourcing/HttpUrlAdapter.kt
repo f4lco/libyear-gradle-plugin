@@ -31,9 +31,20 @@ import java.time.Instant
  * 3. Because Gradle does not expose "turn this module version identifier into a URL" as part of its public API, this strategy
  *    assumes a standard one. Please see [DefaultRepositoryLayout] for details of how the artifact URLs are formed.
  */
-class HttpUrlAdapter(private val repositoryLayout: RepositoryLayout = DefaultRepositoryLayout) : VersionInfoAdapter {
+class HttpUrlAdapter(
+  private val repositoryLayout: RepositoryLayout = DefaultRepositoryLayout,
+  private val maxRetries: Int = 3,
+  private val initialRetryDelayMillis: Long = 2000,
+  private val retryBackoffMultiplier: Int = 2
+) : VersionInfoAdapter {
 
   private val client = OkHttpClient()
+  private val retryableClient = RetryableHttpClient(
+    client = client,
+    maxRetries = maxRetries,
+    initialRetryDelayMillis = initialRetryDelayMillis,
+    retryBackoffMultiplier = retryBackoffMultiplier
+  )
   private val mapper = XmlMapper()
 
   override fun get(m: ModuleVersionIdentifier, repository: ArtifactRepository) = Try.of {
@@ -55,13 +66,8 @@ class HttpUrlAdapter(private val repositoryLayout: RepositoryLayout = DefaultRep
 
   private fun getResponseText(url: HttpUrl): String {
     val request = Request.Builder().url(url).build()
-    client.newCall(request).execute().use { response ->
-
-      if (!response.isSuccessful) {
-        throw IOException("Response for URL $url returned ${response.code}")
-      }
-
-      return response.body?.string() ?: throw IllegalStateException("HTTP response body for $url is empty")
+    return retryableClient.executeWithRetry(request).use { response ->
+      response.body?.string() ?: throw IllegalStateException("HTTP response body for $url is empty")
     }
   }
 
@@ -91,13 +97,8 @@ class HttpUrlAdapter(private val repositoryLayout: RepositoryLayout = DefaultRep
 
   private fun getLastModified(url: HttpUrl): Instant {
     val request = Request.Builder().url(url).head().build()
-    client.newCall(request).execute().use { response ->
-
-      if (!response.isSuccessful) {
-        throw IOException("Response for URL $url returned ${response.code}")
-      }
-
-      return response.headers.getInstant("Last-Modified") ?: throw IllegalArgumentException("Response for URL $url did not contain a Last-Modified header")
+    return retryableClient.executeWithRetry(request).use { response ->
+      response.headers.getInstant("Last-Modified") ?: throw IllegalArgumentException("Response for URL $url did not contain a Last-Modified header")
     }
   }
 }
