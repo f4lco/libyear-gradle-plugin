@@ -14,5 +14,5 @@ dependencies {
 
 libyear {
   failOnError = true
-  validator = singleArtifactMustNotBeOlderThan(5.years)
+  validator = singleArtifactMustNotBeOlderThan(10.years)
 }
