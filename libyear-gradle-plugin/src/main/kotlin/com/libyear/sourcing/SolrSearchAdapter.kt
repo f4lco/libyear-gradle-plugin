@@ -10,7 +10,6 @@ import org.gradle.api.artifacts.ModuleIdentifier
 import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.internal.artifacts.DefaultModuleVersionIdentifier
-import java.io.IOException
 import java.time.Duration
 import java.time.Instant
 

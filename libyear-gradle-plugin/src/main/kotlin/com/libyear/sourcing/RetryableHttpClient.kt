@@ -11,22 +11,22 @@ import java.util.concurrent.TimeUnit
  * A wrapper around OkHttpClient that adds retry functionality with exponential backoff.
  */
 class RetryableHttpClient(
-    private val client: OkHttpClient = OkHttpClient(),
-    private val maxRetries: Int = 3,
-    private val initialRetryDelayMillis: Long = 2000,
-    private val retryBackoffMultiplier: Int = 2
+  private val client: OkHttpClient = OkHttpClient(),
+  private val maxRetries: Int = 3,
+  private val initialRetryDelayMillis: Long = 2000,
+  private val retryBackoffMultiplier: Int = 2
 ) {
-    private val logger = LoggerFactory.getLogger(RetryableHttpClient::class.java)
+  private val logger = LoggerFactory.getLogger(RetryableHttpClient::class.java)
 
-    /**
-     * Executes the given request with retry capability.
-     * If the request fails with a non-2xx response code, it will be retried up to [maxRetries] times
-     * with exponential backoff.
-     *
-     * @param request The HTTP request to execute
-     * @return The successful response, or throws an exception if all retries fail
-     */
-    fun executeWithRetry(request: Request): Response {
+  /**
+   * Executes the given request with retry capability.
+   * If the request fails with a non-2xx response code, it will be retried up to [maxRetries] times
+   * with exponential backoff.
+   *
+   * @param request The HTTP request to execute
+   * @return The successful response, or throws an exception if all retries fail
+   */
+  fun executeWithRetry(request: Request): Response {
     var retryCount = 0
     var currentDelay = initialRetryDelayMillis
 
@@ -34,7 +34,7 @@ class RetryableHttpClient(
       val response = try {
         client.newCall(request).execute()
       } catch (e: IOException) {
-        logger.warn("Request to '${request.url}' failed with exception: '${e.message}'. Retrying (${retryCount}/${maxRetries})...")
+        logger.warn("Request to '${request.url}' failed with exception: '${e.message}'. Retrying ($retryCount/$maxRetries)...")
         null
       }
 
@@ -47,7 +47,7 @@ class RetryableHttpClient(
         val errorBody = response.body?.string() ?: "No response body"
         val code = response.code
         response.close()
-        logger.warn("Request to ${request.url} failed with code $code and body '$errorBody'. Retrying (${retryCount}/${maxRetries})...")
+        logger.warn("Request to ${request.url} failed with code $code and body '$errorBody'. Retrying ($retryCount/$maxRetries)...")
       }
 
       if (retryCount == maxRetries) {
@@ -65,5 +65,5 @@ class RetryableHttpClient(
       retryCount++
       currentDelay *= retryBackoffMultiplier
     }
-}
+  }
 } 
