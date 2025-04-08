@@ -57,9 +57,9 @@ internal class LibYearPluginTest {
     val expectedJson = javaClass.getResourceAsStream("expectedReport.json")?.bufferedReader()?.use { it.readText() }
 
     // Replace lagDays values with 0 using regex so reports match despite age
-    val lagDaysRegex = "\"lagDays\":\\s*\\d+".toRegex()
-    val normalizedLibyearJson = libyearJsonFile.replace(lagDaysRegex, "\"lagDays\": 0")
-    val normalizedExpectedJson = expectedJson?.replace(lagDaysRegex, "\"lagDays\": 0")
+    val lagDaysRegex = "\"lag_days\"\\s*:\\s*\\d+".toRegex()
+    val normalizedLibyearJson = libyearJsonFile.replace(lagDaysRegex, "\"lag_days\": 0")
+    val normalizedExpectedJson = expectedJson?.replace(lagDaysRegex, "\"lag_days\": 0")
 
     assertThat(normalizedLibyearJson).isEqualToIgnoringWhitespace(normalizedExpectedJson)
   }
