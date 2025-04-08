@@ -66,4 +66,4 @@ class RetryableHttpClient(
       currentDelay *= retryBackoffMultiplier
     }
   }
-} 
+}

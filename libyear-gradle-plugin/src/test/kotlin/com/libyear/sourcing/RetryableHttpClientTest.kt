@@ -109,4 +109,4 @@ class RetryableHttpClientTest {
     // But we don't want to be too strict with timing assertions
     assertThat(duration).isGreaterThan(600)
   }
-} 
+}
