@@ -111,6 +111,10 @@ BUILD SUCCESSFUL in 28s
 
 ## Changelog
 
+### 0.4.0 (2025-04-08)
+
+@Breefield kindly contributed retriable requests to the HTTP client to compensate for instability of upstream repositories. Fixes #16.
+
 ### 0.3.1 (2024-11-17)
 
 We have merged two Dependabot PRs with GitHub Action version bumps for this patch release.
